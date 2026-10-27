@@ -1,0 +1,166 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spec.user-monitoring.local/v1/batch.schema.json",
+  "title": "Batch",
+  "description": "Body of POST /v1/batch. One request carries at most 500 events or 1 MB compressed; the size limit is enforced by the server, not by this schema.",
+  "type": "object",
+  "required": ["sent_at", "batch"],
+  "additionalProperties": false,
+  "properties": {
+    "sent_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Device clock at the moment the batch was sent, with offset. The server computes clock skew as received_at minus sent_at and applies it to every event timestamp in the batch."
+    },
+    "batch": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 500,
+      "items": { "$ref": "#/$defs/event" }
+    }
+  },
+  "$defs": {
+    "event": {
+      "type": "object",
+      "required": ["event_id", "type", "device_id", "session_id", "seq", "timestamp", "context"],
+      "additionalProperties": false,
+      "properties": {
+        "event_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "UUIDv7 minted on the client. Time-ordered and the deduplication key."
+        },
+        "type": {
+          "enum": ["screen", "screen_exit", "track", "identify", "session_start", "session_end"]
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "description": "Event name for track events. Names starting with $ are reserved for SDK lifecycle events."
+        },
+        "device_id": {
+          "type": "string",
+          "minLength": 8,
+          "maxLength": 64,
+          "description": "Random id minted on first run and persisted. Never a hardware or advertising id."
+        },
+        "user_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "description": "Present on every event after identify(); absent before it and after reset()."
+        },
+        "session_id": { "type": "string", "format": "uuid" },
+        "seq": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Per-session counter, incremented for every event. Ordering never depends on the clock."
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Device clock at capture, with offset."
+        },
+        "screen": { "$ref": "#/$defs/screen" },
+        "element": { "$ref": "#/$defs/element" },
+        "traits": { "$ref": "#/$defs/properties" },
+        "properties": { "$ref": "#/$defs/properties" },
+        "launch_type": { "enum": ["cold", "warm", "resume"] },
+        "duration_ms": { "type": "integer", "minimum": 0 },
+        "screens_viewed": { "type": "integer", "minimum": 0 },
+        "events_count": { "type": "integer", "minimum": 0 },
+        "context": { "$ref": "#/$defs/context" }
+      },
+      "allOf": [
+        { "if": { "properties": { "type": { "const": "screen" } } }, "then": { "required": ["screen"] } },
+        { "if": { "properties": { "type": { "const": "screen_exit" } } }, "then": { "required": ["screen"] } },
+        { "if": { "properties": { "type": { "const": "track" } } }, "then": { "required": ["name"] } },
+        { "if": { "properties": { "type": { "const": "identify" } } }, "then": { "required": ["user_id"] } },
+        { "if": { "properties": { "type": { "const": "session_start" } } }, "then": { "required": ["launch_type"] } },
+        { "if": { "properties": { "type": { "const": "session_end" } } }, "then": { "required": ["duration_ms"] } }
+      ]
+    },
+    "screen": {
+      "type": "object",
+      "required": ["name"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "previous": { "type": "string", "maxLength": 128, "description": "Screen shown before this one; empty or absent on the first screen of a session." },
+        "previous_duration_ms": { "type": "integer", "minimum": 0, "description": "Dwell time on the previous screen. Present on screen events." },
+        "duration_ms": { "type": "integer", "minimum": 0, "description": "Dwell time on this screen. Present on screen_exit events." },
+        "route": { "type": "string", "maxLength": 512, "description": "Route or path when the platform has one (web, Compose navigation)." }
+      }
+    },
+    "element": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "description": "Resource id, accessibilityIdentifier or data-monitor-id." },
+        "label": { "type": "string", "maxLength": 64, "description": "Accessibility label or visible button text, truncated to 64 characters. Never the contents of a text field." },
+        "type": { "type": "string", "maxLength": 32 },
+        "screen": { "type": "string", "maxLength": 128 }
+      }
+    },
+    "properties": {
+      "type": "object",
+      "maxProperties": 100,
+      "propertyNames": { "minLength": 1, "maxLength": 64 },
+      "additionalProperties": {
+        "type": ["string", "number", "boolean", "null"],
+        "maxLength": 1024
+      },
+      "description": "Flat map of scalar values. At most 100 keys, 1 KB per string value. The server also caps the whole event at 32 KB."
+    },
+    "context": {
+      "type": "object",
+      "required": ["app", "os", "sdk", "locale", "timezone"],
+      "additionalProperties": false,
+      "properties": {
+        "app": {
+          "type": "object",
+          "required": ["name", "version"],
+          "additionalProperties": false,
+          "properties": {
+            "name": { "type": "string", "maxLength": 128 },
+            "version": { "type": "string", "maxLength": 32 },
+            "build": { "type": "string", "maxLength": 32 },
+            "bundle_id": { "type": "string", "maxLength": 256, "description": "Bundle id, package name or web origin, checked against the project's allowlist." }
+          }
+        },
+        "os": {
+          "type": "object",
+          "required": ["name", "version"],
+          "additionalProperties": false,
+          "properties": {
+            "name": { "type": "string", "maxLength": 32 },
+            "version": { "type": "string", "maxLength": 32 }
+          }
+        },
+        "device": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "model": { "type": "string", "maxLength": 64 },
+            "manufacturer": { "type": "string", "maxLength": 64 },
+            "screen": { "type": "string", "maxLength": 32, "description": "Width x height in points, for example 393x852." }
+          }
+        },
+        "locale": { "type": "string", "maxLength": 16 },
+        "timezone": { "type": "string", "maxLength": 64 },
+        "network": { "enum": ["wifi", "cellular", "ethernet", "offline", "unknown"] },
+        "sdk": {
+          "type": "object",
+          "required": ["name", "version"],
+          "additionalProperties": false,
+          "properties": {
+            "name": { "enum": ["kotlin", "swift", "js", "php"] },
+            "version": { "type": "string", "maxLength": 32 },
+            "spec": { "type": "string", "maxLength": 32, "description": "The sdk-spec VERSION the SDK was built against." }
+          }
+        }
+      }
+    }
+  }
+}
