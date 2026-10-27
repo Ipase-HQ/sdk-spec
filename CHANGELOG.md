@@ -16,6 +16,8 @@ Every change to the contract (schema, protocol, fixtures) gets a line here, and 
 - Schema: context.platform (android, ios, web, desktop, server) is required; context.browser (name, version) is optional and sent by the js SDK; context.sdk.spec is required and must be a semver string; app.bundle_id is required on every platform except server.
 - fixtures/: one executable file per scenario (offline-then-online, process-kill, backoff-429, session-timeout, identity-stitching, privacy, property-limits) with the steps a harness drives and the exact events the mock server must observe, matched with $repeat, $platforms, $session, $label and $same_timestamp_as, plus checks, request bounds, forbidden strings and local rejections. fixtures/scenario.schema.json describes the format and npm run validate checks every file against it.
 - Mock server: reserved_name comes from the schema; the test suite loads every fixture through POST /__scenario.
+- protocol.md rewritten so an SDK author can implement a client from it alone: keys and headers, response and rejection codes, exact backoff and in-flight rules, the per-type field matrix, the reserved names and their order, context sources per platform, the session state machine (launch, background, foreground, timeout, kill recovery, reset), screens and dwell with the denylist rule, identity and server-side forwarding, queue and flush, consent, auto-capture per platform, local validation, clock skew, the public API and conformance.
+- Decisions that go beyond the development plan are recorded in ../docs/adr: 0001 reserved names ($tap, $events_dropped), 0002 launch types, 0003 server-side events, 0004 context.platform and context.browser, 0005 web transport without sendBeacon.
 
 ### Changed
 
