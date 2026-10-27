@@ -1,0 +1,32 @@
+{
+  "sent_at": "2026-01-15T09:00:01.000Z",
+  "batch": [
+    {
+      "event_id": "019bc0e2-1280-718b-88ab-04fbe3a36348",
+      "type": "track",
+      "name": "button_tap",
+      "device_id": "6f1d0a52-3b7e-4c9a-8e21-5d4f7a9b0c3e",
+      "session_id": "3f1c2b4e-8a6d-4e2f-9b7c-1a2b3c4d5e6f",
+      "seq": 0,
+      "timestamp": "2026-01-15T09:00:00.000Z",
+      "context": {
+        "platform": "web",
+        "app": {
+          "name": "Mango",
+          "version": "3.4.1"
+        },
+        "os": {
+          "name": "Android",
+          "version": "16"
+        },
+        "locale": "en-GB",
+        "timezone": "Europe/London",
+        "sdk": {
+          "name": "kotlin",
+          "version": "1.0.0",
+          "spec": "1.0.0-draft.2"
+        }
+      }
+    }
+  ]
+}

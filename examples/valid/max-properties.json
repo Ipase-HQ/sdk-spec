@@ -2,10 +2,10 @@
   "sent_at": "2026-01-15T09:00:01.000Z",
   "batch": [
     {
-      "event_id": "019bc0e2-1280-7101-81a2-5cd6ed909a22",
+      "event_id": "019bc0e2-1280-7195-86e2-7eb562eddf5d",
       "type": "track",
       "name": "catalog_filter",
-      "device_id": "d_7f3a9c1e5b2d4a6f",
+      "device_id": "6f1d0a52-3b7e-4c9a-8e21-5d4f7a9b0c3e",
       "session_id": "3f1c2b4e-8a6d-4e2f-9b7c-1a2b3c4d5e6f",
       "seq": 0,
       "timestamp": "2026-01-15T09:00:00.000Z",
@@ -112,6 +112,7 @@
         "longest_allowed_value": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
       },
       "context": {
+        "platform": "android",
         "app": {
           "name": "Mango",
           "version": "3.4.1",
@@ -133,7 +134,7 @@
         "sdk": {
           "name": "kotlin",
           "version": "1.0.0",
-          "spec": "1.0.0-draft.1"
+          "spec": "1.0.0-draft.2"
         }
       }
     }

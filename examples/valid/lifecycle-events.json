@@ -2,14 +2,15 @@
   "sent_at": "2026-01-15T07:32:00.000-05:00",
   "batch": [
     {
-      "event_id": "019bc1a2-5540-70bb-8e1e-08c47287358f",
+      "event_id": "019bc1a2-5540-7101-81a2-5cd6ed909a22",
       "type": "session_start",
-      "device_id": "d_9e8d7c6b5a4f3e2d",
+      "device_id": "c9e8d7c6-b5a4-4f3e-9d2c-1b0a9f8e7d6c",
       "session_id": "c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5f",
       "seq": 0,
       "timestamp": "2026-01-15T07:30:00.000-05:00",
       "launch_type": "cold",
       "context": {
+        "platform": "ios",
         "app": {
           "name": "Mango",
           "version": "3.4.0",
@@ -31,15 +32,15 @@
         "sdk": {
           "name": "swift",
           "version": "1.0.0",
-          "spec": "1.0.0-draft.1"
+          "spec": "1.0.0-draft.2"
         }
       }
     },
     {
-      "event_id": "019bc1a2-5568-70c5-8c55-827df1d1b1a4",
+      "event_id": "019bc1a2-5568-710a-8fd9-d6906cdb1637",
       "type": "track",
       "name": "$app_updated",
-      "device_id": "d_9e8d7c6b5a4f3e2d",
+      "device_id": "c9e8d7c6-b5a4-4f3e-9d2c-1b0a9f8e7d6c",
       "session_id": "c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5f",
       "seq": 1,
       "timestamp": "2026-01-15T07:30:00.040-05:00",
@@ -48,6 +49,7 @@
         "version": "3.4.0"
       },
       "context": {
+        "platform": "ios",
         "app": {
           "name": "Mango",
           "version": "3.4.0",
@@ -69,21 +71,60 @@
         "sdk": {
           "name": "swift",
           "version": "1.0.0",
-          "spec": "1.0.0-draft.1"
+          "spec": "1.0.0-draft.2"
         }
       }
     },
     {
-      "event_id": "019bc1a2-5928-70cf-8a8c-fc37711c2db9",
-      "type": "screen",
-      "device_id": "d_9e8d7c6b5a4f3e2d",
+      "event_id": "019bc1a2-556d-7114-8e11-5049ec25924c",
+      "type": "track",
+      "name": "$events_dropped",
+      "device_id": "c9e8d7c6-b5a4-4f3e-9d2c-1b0a9f8e7d6c",
       "session_id": "c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5f",
       "seq": 2,
+      "timestamp": "2026-01-15T07:30:00.045-05:00",
+      "properties": {
+        "count": 12
+      },
+      "context": {
+        "platform": "ios",
+        "app": {
+          "name": "Mango",
+          "version": "3.4.0",
+          "build": "2026.1.9",
+          "bundle_id": "com.mangoentertainment.ios"
+        },
+        "os": {
+          "name": "iOS",
+          "version": "26.2"
+        },
+        "device": {
+          "model": "iPhone17,1",
+          "manufacturer": "Apple",
+          "screen": "393x852"
+        },
+        "locale": "en-US",
+        "timezone": "America/New_York",
+        "network": "cellular",
+        "sdk": {
+          "name": "swift",
+          "version": "1.0.0",
+          "spec": "1.0.0-draft.2"
+        }
+      }
+    },
+    {
+      "event_id": "019bc1a2-5928-711e-8c48-ca036b700e61",
+      "type": "screen",
+      "device_id": "c9e8d7c6-b5a4-4f3e-9d2c-1b0a9f8e7d6c",
+      "session_id": "c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5f",
+      "seq": 3,
       "timestamp": "2026-01-15T07:30:01.000-05:00",
       "screen": {
         "name": "Home"
       },
       "context": {
+        "platform": "ios",
         "app": {
           "name": "Mango",
           "version": "3.4.0",
@@ -105,48 +146,14 @@
         "sdk": {
           "name": "swift",
           "version": "1.0.0",
-          "spec": "1.0.0-draft.1"
+          "spec": "1.0.0-draft.2"
         }
       }
     },
     {
-      "event_id": "019bc1a3-3fa0-70d9-88c4-75f0f066a9ce",
-      "type": "track",
-      "name": "$app_backgrounded",
-      "device_id": "d_9e8d7c6b5a4f3e2d",
-      "session_id": "c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5f",
-      "seq": 3,
-      "timestamp": "2026-01-15T07:31:00.000-05:00",
-      "context": {
-        "app": {
-          "name": "Mango",
-          "version": "3.4.0",
-          "build": "2026.1.9",
-          "bundle_id": "com.mangoentertainment.ios"
-        },
-        "os": {
-          "name": "iOS",
-          "version": "26.2"
-        },
-        "device": {
-          "model": "iPhone17,1",
-          "manufacturer": "Apple",
-          "screen": "393x852"
-        },
-        "locale": "en-US",
-        "timezone": "America/New_York",
-        "network": "cellular",
-        "sdk": {
-          "name": "swift",
-          "version": "1.0.0",
-          "spec": "1.0.0-draft.1"
-        }
-      }
-    },
-    {
-      "event_id": "019bc1a3-3fa0-70e3-86fb-efaa6fb125e3",
+      "event_id": "019bc1a3-3fa0-7128-8a80-43bceaba8a76",
       "type": "screen_exit",
-      "device_id": "d_9e8d7c6b5a4f3e2d",
+      "device_id": "c9e8d7c6-b5a4-4f3e-9d2c-1b0a9f8e7d6c",
       "session_id": "c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5f",
       "seq": 4,
       "timestamp": "2026-01-15T07:31:00.000-05:00",
@@ -155,6 +162,7 @@
         "duration_ms": 59000
       },
       "context": {
+        "platform": "ios",
         "app": {
           "name": "Mango",
           "version": "3.4.0",
@@ -176,19 +184,20 @@
         "sdk": {
           "name": "swift",
           "version": "1.0.0",
-          "spec": "1.0.0-draft.1"
+          "spec": "1.0.0-draft.2"
         }
       }
     },
     {
-      "event_id": "019bc1a3-ef68-70ed-8533-6963eefba1f8",
+      "event_id": "019bc1a3-3fa0-7132-88b7-bd766a05068b",
       "type": "track",
-      "name": "$app_foregrounded",
-      "device_id": "d_9e8d7c6b5a4f3e2d",
+      "name": "$app_backgrounded",
+      "device_id": "c9e8d7c6-b5a4-4f3e-9d2c-1b0a9f8e7d6c",
       "session_id": "c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5f",
       "seq": 5,
-      "timestamp": "2026-01-15T07:31:45.000-05:00",
+      "timestamp": "2026-01-15T07:31:00.000-05:00",
       "context": {
+        "platform": "ios",
         "app": {
           "name": "Mango",
           "version": "3.4.0",
@@ -210,7 +219,42 @@
         "sdk": {
           "name": "swift",
           "version": "1.0.0",
-          "spec": "1.0.0-draft.1"
+          "spec": "1.0.0-draft.2"
+        }
+      }
+    },
+    {
+      "event_id": "019bc1a3-ef68-713c-86ef-372fe94f82a0",
+      "type": "track",
+      "name": "$app_foregrounded",
+      "device_id": "c9e8d7c6-b5a4-4f3e-9d2c-1b0a9f8e7d6c",
+      "session_id": "c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5f",
+      "seq": 6,
+      "timestamp": "2026-01-15T07:31:45.000-05:00",
+      "context": {
+        "platform": "ios",
+        "app": {
+          "name": "Mango",
+          "version": "3.4.0",
+          "build": "2026.1.9",
+          "bundle_id": "com.mangoentertainment.ios"
+        },
+        "os": {
+          "name": "iOS",
+          "version": "26.2"
+        },
+        "device": {
+          "model": "iPhone17,1",
+          "manufacturer": "Apple",
+          "screen": "393x852"
+        },
+        "locale": "en-US",
+        "timezone": "America/New_York",
+        "network": "cellular",
+        "sdk": {
+          "name": "swift",
+          "version": "1.0.0",
+          "spec": "1.0.0-draft.2"
         }
       }
     }

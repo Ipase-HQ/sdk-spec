@@ -4,12 +4,13 @@
     {
       "event_id": "019bc0e2-1280-7009-8e37-79b97f4a7c15",
       "type": "session_start",
-      "device_id": "d_7f3a9c1e5b2d4a6f",
+      "device_id": "6f1d0a52-3b7e-4c9a-8e21-5d4f7a9b0c3e",
       "session_id": "3f1c2b4e-8a6d-4e2f-9b7c-1a2b3c4d5e6f",
       "seq": 0,
       "timestamp": "2026-01-15T09:00:00.000Z",
       "launch_type": "cold",
       "context": {
+        "platform": "android",
         "app": {
           "name": "Mango",
           "version": "3.4.1",
@@ -31,7 +32,7 @@
         "sdk": {
           "name": "kotlin",
           "version": "1.0.0",
-          "spec": "1.0.0-draft.1"
+          "spec": "1.0.0-draft.2"
         }
       }
     },
@@ -39,11 +40,12 @@
       "event_id": "019bc0e2-12b2-7013-8c6e-f372fe94f82a",
       "type": "track",
       "name": "$app_installed",
-      "device_id": "d_7f3a9c1e5b2d4a6f",
+      "device_id": "6f1d0a52-3b7e-4c9a-8e21-5d4f7a9b0c3e",
       "session_id": "3f1c2b4e-8a6d-4e2f-9b7c-1a2b3c4d5e6f",
       "seq": 1,
       "timestamp": "2026-01-15T09:00:00.050Z",
       "context": {
+        "platform": "android",
         "app": {
           "name": "Mango",
           "version": "3.4.1",
@@ -65,14 +67,14 @@
         "sdk": {
           "name": "kotlin",
           "version": "1.0.0",
-          "spec": "1.0.0-draft.1"
+          "spec": "1.0.0-draft.2"
         }
       }
     },
     {
       "event_id": "019bc0e2-1668-701d-8aa6-6d2c7ddf743f",
       "type": "screen",
-      "device_id": "d_7f3a9c1e5b2d4a6f",
+      "device_id": "6f1d0a52-3b7e-4c9a-8e21-5d4f7a9b0c3e",
       "session_id": "3f1c2b4e-8a6d-4e2f-9b7c-1a2b3c4d5e6f",
       "seq": 2,
       "timestamp": "2026-01-15T09:00:01.000Z",
@@ -80,6 +82,7 @@
         "name": "Feed"
       },
       "context": {
+        "platform": "android",
         "app": {
           "name": "Mango",
           "version": "3.4.1",
@@ -101,15 +104,15 @@
         "sdk": {
           "name": "kotlin",
           "version": "1.0.0",
-          "spec": "1.0.0-draft.1"
+          "spec": "1.0.0-draft.2"
         }
       }
     },
     {
       "event_id": "019bc0e2-42f0-7027-88dd-e6e5fd29f054",
       "type": "track",
-      "name": "like",
-      "device_id": "d_7f3a9c1e5b2d4a6f",
+      "name": "$tap",
+      "device_id": "6f1d0a52-3b7e-4c9a-8e21-5d4f7a9b0c3e",
       "session_id": "3f1c2b4e-8a6d-4e2f-9b7c-1a2b3c4d5e6f",
       "seq": 3,
       "timestamp": "2026-01-15T09:00:12.400Z",
@@ -119,11 +122,8 @@
         "type": "ImageButton",
         "screen": "Feed"
       },
-      "properties": {
-        "post_id": "p_8812",
-        "source": "feed"
-      },
       "context": {
+        "platform": "android",
         "app": {
           "name": "Mango",
           "version": "3.4.1",
@@ -145,16 +145,55 @@
         "sdk": {
           "name": "kotlin",
           "version": "1.0.0",
-          "spec": "1.0.0-draft.1"
+          "spec": "1.0.0-draft.2"
         }
       }
     },
     {
-      "event_id": "019bc0e2-fce0-7031-8715-609f7c746c69",
-      "type": "screen",
-      "device_id": "d_7f3a9c1e5b2d4a6f",
+      "event_id": "019bc0e2-4304-7031-8715-609f7c746c69",
+      "type": "track",
+      "name": "like",
+      "device_id": "6f1d0a52-3b7e-4c9a-8e21-5d4f7a9b0c3e",
       "session_id": "3f1c2b4e-8a6d-4e2f-9b7c-1a2b3c4d5e6f",
       "seq": 4,
+      "timestamp": "2026-01-15T09:00:12.420Z",
+      "properties": {
+        "post_id": "p_8812",
+        "source": "feed"
+      },
+      "context": {
+        "platform": "android",
+        "app": {
+          "name": "Mango",
+          "version": "3.4.1",
+          "build": "341",
+          "bundle_id": "com.mangoentertainment.app"
+        },
+        "os": {
+          "name": "Android",
+          "version": "16"
+        },
+        "device": {
+          "model": "Pixel 9",
+          "manufacturer": "Google",
+          "screen": "412x915"
+        },
+        "locale": "en-GB",
+        "timezone": "Europe/London",
+        "network": "wifi",
+        "sdk": {
+          "name": "kotlin",
+          "version": "1.0.0",
+          "spec": "1.0.0-draft.2"
+        }
+      }
+    },
+    {
+      "event_id": "019bc0e2-fce0-703b-854c-da58fbbee87e",
+      "type": "screen",
+      "device_id": "6f1d0a52-3b7e-4c9a-8e21-5d4f7a9b0c3e",
+      "session_id": "3f1c2b4e-8a6d-4e2f-9b7c-1a2b3c4d5e6f",
+      "seq": 5,
       "timestamp": "2026-01-15T09:01:00.000Z",
       "screen": {
         "name": "Profile",
@@ -162,6 +201,7 @@
         "previous_duration_ms": 59000
       },
       "context": {
+        "platform": "android",
         "app": {
           "name": "Mango",
           "version": "3.4.1",
@@ -183,48 +223,14 @@
         "sdk": {
           "name": "kotlin",
           "version": "1.0.0",
-          "spec": "1.0.0-draft.1"
-        }
-      }
-    },
-    {
-      "event_id": "019bc0e4-d1a0-703b-854c-da58fbbee87e",
-      "type": "track",
-      "name": "$app_backgrounded",
-      "device_id": "d_7f3a9c1e5b2d4a6f",
-      "session_id": "3f1c2b4e-8a6d-4e2f-9b7c-1a2b3c4d5e6f",
-      "seq": 5,
-      "timestamp": "2026-01-15T09:03:00.000Z",
-      "context": {
-        "app": {
-          "name": "Mango",
-          "version": "3.4.1",
-          "build": "341",
-          "bundle_id": "com.mangoentertainment.app"
-        },
-        "os": {
-          "name": "Android",
-          "version": "16"
-        },
-        "device": {
-          "model": "Pixel 9",
-          "manufacturer": "Google",
-          "screen": "412x915"
-        },
-        "locale": "en-GB",
-        "timezone": "Europe/London",
-        "network": "wifi",
-        "sdk": {
-          "name": "kotlin",
-          "version": "1.0.0",
-          "spec": "1.0.0-draft.1"
+          "spec": "1.0.0-draft.2"
         }
       }
     },
     {
       "event_id": "019bc0e4-d1a0-7045-8384-54127b096493",
       "type": "screen_exit",
-      "device_id": "d_7f3a9c1e5b2d4a6f",
+      "device_id": "6f1d0a52-3b7e-4c9a-8e21-5d4f7a9b0c3e",
       "session_id": "3f1c2b4e-8a6d-4e2f-9b7c-1a2b3c4d5e6f",
       "seq": 6,
       "timestamp": "2026-01-15T09:03:00.000Z",
@@ -233,6 +239,7 @@
         "duration_ms": 120000
       },
       "context": {
+        "platform": "android",
         "app": {
           "name": "Mango",
           "version": "3.4.1",
@@ -254,21 +261,20 @@
         "sdk": {
           "name": "kotlin",
           "version": "1.0.0",
-          "spec": "1.0.0-draft.1"
+          "spec": "1.0.0-draft.2"
         }
       }
     },
     {
       "event_id": "019bc0e4-d1a0-704f-81bb-cdcbfa53e0a8",
-      "type": "session_end",
-      "device_id": "d_7f3a9c1e5b2d4a6f",
+      "type": "track",
+      "name": "$app_backgrounded",
+      "device_id": "6f1d0a52-3b7e-4c9a-8e21-5d4f7a9b0c3e",
       "session_id": "3f1c2b4e-8a6d-4e2f-9b7c-1a2b3c4d5e6f",
       "seq": 7,
       "timestamp": "2026-01-15T09:03:00.000Z",
-      "duration_ms": 180000,
-      "screens_viewed": 2,
-      "events_count": 8,
       "context": {
+        "platform": "android",
         "app": {
           "name": "Mango",
           "version": "3.4.1",
@@ -290,7 +296,44 @@
         "sdk": {
           "name": "kotlin",
           "version": "1.0.0",
-          "spec": "1.0.0-draft.1"
+          "spec": "1.0.0-draft.2"
+        }
+      }
+    },
+    {
+      "event_id": "019bc0e4-d1a0-7058-8ff3-4785799e5cbd",
+      "type": "session_end",
+      "device_id": "6f1d0a52-3b7e-4c9a-8e21-5d4f7a9b0c3e",
+      "session_id": "3f1c2b4e-8a6d-4e2f-9b7c-1a2b3c4d5e6f",
+      "seq": 8,
+      "timestamp": "2026-01-15T09:03:00.000Z",
+      "duration_ms": 180000,
+      "screens_viewed": 2,
+      "events_count": 9,
+      "context": {
+        "platform": "android",
+        "app": {
+          "name": "Mango",
+          "version": "3.4.1",
+          "build": "341",
+          "bundle_id": "com.mangoentertainment.app"
+        },
+        "os": {
+          "name": "Android",
+          "version": "16"
+        },
+        "device": {
+          "model": "Pixel 9",
+          "manufacturer": "Google",
+          "screen": "412x915"
+        },
+        "locale": "en-GB",
+        "timezone": "Europe/London",
+        "network": "wifi",
+        "sdk": {
+          "name": "kotlin",
+          "version": "1.0.0",
+          "spec": "1.0.0-draft.2"
         }
       }
     }

@@ -1,0 +1,259 @@
+{
+  "sent_at": "2026-01-15T12:06:01.000Z",
+  "batch": [
+    {
+      "event_id": "019bc186-de00-7146-8526-b0e96899feb5",
+      "type": "session_start",
+      "device_id": "6f1d0a52-3b7e-4c9a-8e21-5d4f7a9b0c3e",
+      "session_id": "5a6b7c8d-9e0f-4a1b-8c2d-3e4f5a6b7c8d",
+      "seq": 0,
+      "timestamp": "2026-01-15T12:00:00.000Z",
+      "launch_type": "cold",
+      "context": {
+        "platform": "android",
+        "app": {
+          "name": "Mango",
+          "version": "3.4.1",
+          "build": "341",
+          "bundle_id": "com.mangoentertainment.app"
+        },
+        "os": {
+          "name": "Android",
+          "version": "16"
+        },
+        "device": {
+          "model": "Pixel 9",
+          "manufacturer": "Google",
+          "screen": "412x915"
+        },
+        "locale": "en-GB",
+        "timezone": "Europe/London",
+        "network": "wifi",
+        "sdk": {
+          "name": "kotlin",
+          "version": "1.0.0",
+          "spec": "1.0.0-draft.2"
+        }
+      }
+    },
+    {
+      "event_id": "019bc186-e120-7150-835e-2aa2e7e47aca",
+      "type": "screen",
+      "device_id": "6f1d0a52-3b7e-4c9a-8e21-5d4f7a9b0c3e",
+      "session_id": "5a6b7c8d-9e0f-4a1b-8c2d-3e4f5a6b7c8d",
+      "seq": 1,
+      "timestamp": "2026-01-15T12:00:00.800Z",
+      "screen": {
+        "name": "Feed"
+      },
+      "context": {
+        "platform": "android",
+        "app": {
+          "name": "Mango",
+          "version": "3.4.1",
+          "build": "341",
+          "bundle_id": "com.mangoentertainment.app"
+        },
+        "os": {
+          "name": "Android",
+          "version": "16"
+        },
+        "device": {
+          "model": "Pixel 9",
+          "manufacturer": "Google",
+          "screen": "412x915"
+        },
+        "locale": "en-GB",
+        "timezone": "Europe/London",
+        "network": "wifi",
+        "sdk": {
+          "name": "kotlin",
+          "version": "1.0.0",
+          "spec": "1.0.0-draft.2"
+        }
+      }
+    },
+    {
+      "event_id": "019bc187-5650-715a-8195-a45c672ef6df",
+      "type": "screen_exit",
+      "device_id": "6f1d0a52-3b7e-4c9a-8e21-5d4f7a9b0c3e",
+      "session_id": "5a6b7c8d-9e0f-4a1b-8c2d-3e4f5a6b7c8d",
+      "seq": 2,
+      "timestamp": "2026-01-15T12:00:30.800Z",
+      "screen": {
+        "name": "Feed",
+        "duration_ms": 30000
+      },
+      "context": {
+        "platform": "android",
+        "app": {
+          "name": "Mango",
+          "version": "3.4.1",
+          "build": "341",
+          "bundle_id": "com.mangoentertainment.app"
+        },
+        "os": {
+          "name": "Android",
+          "version": "16"
+        },
+        "device": {
+          "model": "Pixel 9",
+          "manufacturer": "Google",
+          "screen": "412x915"
+        },
+        "locale": "en-GB",
+        "timezone": "Europe/London",
+        "network": "wifi",
+        "sdk": {
+          "name": "kotlin",
+          "version": "1.0.0",
+          "spec": "1.0.0-draft.2"
+        }
+      }
+    },
+    {
+      "event_id": "019bc187-5650-7163-8fcd-1e15e67972f4",
+      "type": "track",
+      "name": "$app_backgrounded",
+      "device_id": "6f1d0a52-3b7e-4c9a-8e21-5d4f7a9b0c3e",
+      "session_id": "5a6b7c8d-9e0f-4a1b-8c2d-3e4f5a6b7c8d",
+      "seq": 3,
+      "timestamp": "2026-01-15T12:00:30.800Z",
+      "context": {
+        "platform": "android",
+        "app": {
+          "name": "Mango",
+          "version": "3.4.1",
+          "build": "341",
+          "bundle_id": "com.mangoentertainment.app"
+        },
+        "os": {
+          "name": "Android",
+          "version": "16"
+        },
+        "device": {
+          "model": "Pixel 9",
+          "manufacturer": "Google",
+          "screen": "412x915"
+        },
+        "locale": "en-GB",
+        "timezone": "Europe/London",
+        "network": "wifi",
+        "sdk": {
+          "name": "kotlin",
+          "version": "1.0.0",
+          "spec": "1.0.0-draft.2"
+        }
+      }
+    },
+    {
+      "event_id": "019bc187-5650-716d-8e04-97cf65c3ef09",
+      "type": "session_end",
+      "device_id": "6f1d0a52-3b7e-4c9a-8e21-5d4f7a9b0c3e",
+      "session_id": "5a6b7c8d-9e0f-4a1b-8c2d-3e4f5a6b7c8d",
+      "seq": 4,
+      "timestamp": "2026-01-15T12:00:30.800Z",
+      "duration_ms": 30800,
+      "screens_viewed": 1,
+      "events_count": 5,
+      "context": {
+        "platform": "android",
+        "app": {
+          "name": "Mango",
+          "version": "3.4.1",
+          "build": "341",
+          "bundle_id": "com.mangoentertainment.app"
+        },
+        "os": {
+          "name": "Android",
+          "version": "16"
+        },
+        "device": {
+          "model": "Pixel 9",
+          "manufacturer": "Google",
+          "screen": "412x915"
+        },
+        "locale": "en-GB",
+        "timezone": "Europe/London",
+        "network": "wifi",
+        "sdk": {
+          "name": "kotlin",
+          "version": "1.0.0",
+          "spec": "1.0.0-draft.2"
+        }
+      }
+    },
+    {
+      "event_id": "019bc18c-5c40-7177-8c3c-1188e50e6b1e",
+      "type": "session_start",
+      "device_id": "6f1d0a52-3b7e-4c9a-8e21-5d4f7a9b0c3e",
+      "session_id": "0f1e2d3c-4b5a-4968-8776-655443322110",
+      "seq": 0,
+      "timestamp": "2026-01-15T12:06:00.000Z",
+      "launch_type": "resume",
+      "context": {
+        "platform": "android",
+        "app": {
+          "name": "Mango",
+          "version": "3.4.1",
+          "build": "341",
+          "bundle_id": "com.mangoentertainment.app"
+        },
+        "os": {
+          "name": "Android",
+          "version": "16"
+        },
+        "device": {
+          "model": "Pixel 9",
+          "manufacturer": "Google",
+          "screen": "412x915"
+        },
+        "locale": "en-GB",
+        "timezone": "Europe/London",
+        "network": "wifi",
+        "sdk": {
+          "name": "kotlin",
+          "version": "1.0.0",
+          "spec": "1.0.0-draft.2"
+        }
+      }
+    },
+    {
+      "event_id": "019bc18c-5c40-7181-8a73-8b426458e733",
+      "type": "screen",
+      "device_id": "6f1d0a52-3b7e-4c9a-8e21-5d4f7a9b0c3e",
+      "session_id": "0f1e2d3c-4b5a-4968-8776-655443322110",
+      "seq": 1,
+      "timestamp": "2026-01-15T12:06:00.000Z",
+      "screen": {
+        "name": "Feed"
+      },
+      "context": {
+        "platform": "android",
+        "app": {
+          "name": "Mango",
+          "version": "3.4.1",
+          "build": "341",
+          "bundle_id": "com.mangoentertainment.app"
+        },
+        "os": {
+          "name": "Android",
+          "version": "16"
+        },
+        "device": {
+          "model": "Pixel 9",
+          "manufacturer": "Google",
+          "screen": "412x915"
+        },
+        "locale": "en-GB",
+        "timezone": "Europe/London",
+        "network": "wifi",
+        "sdk": {
+          "name": "kotlin",
+          "version": "1.0.0",
+          "spec": "1.0.0-draft.2"
+        }
+      }
+    }
+  ]
+}
