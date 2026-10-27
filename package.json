@@ -1,0 +1,19 @@
+{
+  "name": "@mango/sdk-spec",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Wire protocol, JSON Schema and conformance fixtures for the User Monitoring Platform SDKs. The spec version lives in VERSION.",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "validate": "node scripts/validate.mjs",
+    "examples": "node scripts/generate-examples.mjs",
+    "test": "npm run validate && npm --prefix mock-server test"
+  },
+  "devDependencies": {
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1"
+  }
+}

@@ -1,0 +1,328 @@
+{
+  "sent_at": "2026-01-15T10:20:15.000+01:00",
+  "batch": [
+    {
+      "event_id": "019bc0ef-ce20-7058-8ff3-4785799e5cbd",
+      "type": "session_start",
+      "device_id": "d_2b9c4e6f8a1d3c5e",
+      "session_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+      "seq": 0,
+      "timestamp": "2026-01-15T10:15:00.000+01:00",
+      "launch_type": "cold",
+      "context": {
+        "app": {
+          "name": "Mango Web",
+          "version": "2026.01.12",
+          "bundle_id": "https://app.mangoentertainment.com"
+        },
+        "os": {
+          "name": "macOS",
+          "version": "15.3"
+        },
+        "device": {
+          "model": "Mac",
+          "screen": "1512x982"
+        },
+        "locale": "de-DE",
+        "timezone": "Europe/Berlin",
+        "network": "wifi",
+        "sdk": {
+          "name": "js",
+          "version": "1.0.0",
+          "spec": "1.0.0-draft.1"
+        }
+      }
+    },
+    {
+      "event_id": "019bc0ef-ce98-7062-8e2a-c13ef8e8d8d2",
+      "type": "screen",
+      "device_id": "d_2b9c4e6f8a1d3c5e",
+      "session_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+      "seq": 1,
+      "timestamp": "2026-01-15T10:15:00.120+01:00",
+      "screen": {
+        "name": "Home",
+        "route": "/"
+      },
+      "context": {
+        "app": {
+          "name": "Mango Web",
+          "version": "2026.01.12",
+          "bundle_id": "https://app.mangoentertainment.com"
+        },
+        "os": {
+          "name": "macOS",
+          "version": "15.3"
+        },
+        "device": {
+          "model": "Mac",
+          "screen": "1512x982"
+        },
+        "locale": "de-DE",
+        "timezone": "Europe/Berlin",
+        "network": "wifi",
+        "sdk": {
+          "name": "js",
+          "version": "1.0.0",
+          "spec": "1.0.0-draft.1"
+        }
+      }
+    },
+    {
+      "event_id": "019bc0f0-7230-706c-8c62-3af8783354e7",
+      "type": "track",
+      "name": "browse",
+      "device_id": "d_2b9c4e6f8a1d3c5e",
+      "session_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+      "seq": 2,
+      "timestamp": "2026-01-15T10:15:42.000+01:00",
+      "properties": {
+        "category": "shoes"
+      },
+      "context": {
+        "app": {
+          "name": "Mango Web",
+          "version": "2026.01.12",
+          "bundle_id": "https://app.mangoentertainment.com"
+        },
+        "os": {
+          "name": "macOS",
+          "version": "15.3"
+        },
+        "device": {
+          "model": "Mac",
+          "screen": "1512x982"
+        },
+        "locale": "de-DE",
+        "timezone": "Europe/Berlin",
+        "network": "wifi",
+        "sdk": {
+          "name": "js",
+          "version": "1.0.0",
+          "spec": "1.0.0-draft.1"
+        }
+      }
+    },
+    {
+      "event_id": "019bc0f0-cc08-7076-8a99-b4b1f77dd0fc",
+      "type": "identify",
+      "device_id": "d_2b9c4e6f8a1d3c5e",
+      "user_id": "u_123",
+      "session_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+      "seq": 3,
+      "timestamp": "2026-01-15T10:16:05.000+01:00",
+      "traits": {
+        "plan": "free",
+        "signup_month": "2025-11"
+      },
+      "context": {
+        "app": {
+          "name": "Mango Web",
+          "version": "2026.01.12",
+          "bundle_id": "https://app.mangoentertainment.com"
+        },
+        "os": {
+          "name": "macOS",
+          "version": "15.3"
+        },
+        "device": {
+          "model": "Mac",
+          "screen": "1512x982"
+        },
+        "locale": "de-DE",
+        "timezone": "Europe/Berlin",
+        "network": "wifi",
+        "sdk": {
+          "name": "js",
+          "version": "1.0.0",
+          "spec": "1.0.0-draft.1"
+        }
+      }
+    },
+    {
+      "event_id": "019bc0f1-c9f0-7080-88d1-2e6b76c84d11",
+      "type": "screen",
+      "device_id": "d_2b9c4e6f8a1d3c5e",
+      "user_id": "u_123",
+      "session_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+      "seq": 4,
+      "timestamp": "2026-01-15T10:17:10.000+01:00",
+      "screen": {
+        "name": "Checkout",
+        "route": "/checkout",
+        "previous": "Home",
+        "previous_duration_ms": 129880
+      },
+      "context": {
+        "app": {
+          "name": "Mango Web",
+          "version": "2026.01.12",
+          "bundle_id": "https://app.mangoentertainment.com"
+        },
+        "os": {
+          "name": "macOS",
+          "version": "15.3"
+        },
+        "device": {
+          "model": "Mac",
+          "screen": "1512x982"
+        },
+        "locale": "de-DE",
+        "timezone": "Europe/Berlin",
+        "network": "wifi",
+        "sdk": {
+          "name": "js",
+          "version": "1.0.0",
+          "spec": "1.0.0-draft.1"
+        }
+      }
+    },
+    {
+      "event_id": "019bc0f3-0270-708a-8708-a824f612c926",
+      "type": "track",
+      "name": "purchase",
+      "device_id": "d_2b9c4e6f8a1d3c5e",
+      "user_id": "u_123",
+      "session_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+      "seq": 5,
+      "timestamp": "2026-01-15T10:18:30.000+01:00",
+      "element": {
+        "id": "pay-now",
+        "label": "Pay now",
+        "type": "button",
+        "screen": "Checkout"
+      },
+      "properties": {
+        "order_id": "o_55",
+        "value": 49.99,
+        "currency": "EUR",
+        "items": 2
+      },
+      "context": {
+        "app": {
+          "name": "Mango Web",
+          "version": "2026.01.12",
+          "bundle_id": "https://app.mangoentertainment.com"
+        },
+        "os": {
+          "name": "macOS",
+          "version": "15.3"
+        },
+        "device": {
+          "model": "Mac",
+          "screen": "1512x982"
+        },
+        "locale": "de-DE",
+        "timezone": "Europe/Berlin",
+        "network": "wifi",
+        "sdk": {
+          "name": "js",
+          "version": "1.0.0",
+          "spec": "1.0.0-draft.1"
+        }
+      }
+    },
+    {
+      "event_id": "019bc0f3-77a0-7094-8540-21de755d453b",
+      "type": "session_end",
+      "device_id": "d_2b9c4e6f8a1d3c5e",
+      "user_id": "u_123",
+      "session_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+      "seq": 6,
+      "timestamp": "2026-01-15T10:19:00.000+01:00",
+      "duration_ms": 240000,
+      "screens_viewed": 2,
+      "events_count": 7,
+      "context": {
+        "app": {
+          "name": "Mango Web",
+          "version": "2026.01.12",
+          "bundle_id": "https://app.mangoentertainment.com"
+        },
+        "os": {
+          "name": "macOS",
+          "version": "15.3"
+        },
+        "device": {
+          "model": "Mac",
+          "screen": "1512x982"
+        },
+        "locale": "de-DE",
+        "timezone": "Europe/Berlin",
+        "network": "wifi",
+        "sdk": {
+          "name": "js",
+          "version": "1.0.0",
+          "spec": "1.0.0-draft.1"
+        }
+      }
+    },
+    {
+      "event_id": "019bc0f3-77a0-709e-8377-9b97f4a7c150",
+      "type": "session_start",
+      "device_id": "d_2b9c4e6f8a1d3c5e",
+      "session_id": "9b2f5c1d-3e4a-4b6c-8d7e-2f1a0b9c8d7e",
+      "seq": 0,
+      "timestamp": "2026-01-15T10:19:00.000+01:00",
+      "launch_type": "warm",
+      "context": {
+        "app": {
+          "name": "Mango Web",
+          "version": "2026.01.12",
+          "bundle_id": "https://app.mangoentertainment.com"
+        },
+        "os": {
+          "name": "macOS",
+          "version": "15.3"
+        },
+        "device": {
+          "model": "Mac",
+          "screen": "1512x982"
+        },
+        "locale": "de-DE",
+        "timezone": "Europe/Berlin",
+        "network": "wifi",
+        "sdk": {
+          "name": "js",
+          "version": "1.0.0",
+          "spec": "1.0.0-draft.1"
+        }
+      }
+    },
+    {
+      "event_id": "019bc0f3-c5c0-70a8-81af-155173f23d65",
+      "type": "track",
+      "name": "browse",
+      "device_id": "d_2b9c4e6f8a1d3c5e",
+      "session_id": "9b2f5c1d-3e4a-4b6c-8d7e-2f1a0b9c8d7e",
+      "seq": 1,
+      "timestamp": "2026-01-15T10:19:20.000+01:00",
+      "properties": {
+        "category": "hats"
+      },
+      "context": {
+        "app": {
+          "name": "Mango Web",
+          "version": "2026.01.12",
+          "bundle_id": "https://app.mangoentertainment.com"
+        },
+        "os": {
+          "name": "macOS",
+          "version": "15.3"
+        },
+        "device": {
+          "model": "Mac",
+          "screen": "1512x982"
+        },
+        "locale": "de-DE",
+        "timezone": "Europe/Berlin",
+        "network": "wifi",
+        "sdk": {
+          "name": "js",
+          "version": "1.0.0",
+          "spec": "1.0.0-draft.1"
+        }
+      }
+    }
+  ]
+}

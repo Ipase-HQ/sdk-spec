@@ -1,0 +1,39 @@
+{
+  "sent_at": "2026-01-15T09:00:05.000+00:00",
+  "batch": [
+    {
+      "event_id": "019bc0e2-2586-70b1-8fe6-8f0af33cb97a",
+      "type": "track",
+      "name": "order_shipped",
+      "device_id": "d_7f3a9c1e5b2d4a6f",
+      "user_id": "u_123",
+      "session_id": "3f1c2b4e-8a6d-4e2f-9b7c-1a2b3c4d5e6f",
+      "seq": 0,
+      "timestamp": "2026-01-15T09:00:04.870+00:00",
+      "properties": {
+        "order_id": "o_55",
+        "carrier": "dhl",
+        "express": false,
+        "weight_kg": 1.2,
+        "gift_note": null
+      },
+      "context": {
+        "app": {
+          "name": "mango-backend",
+          "version": "2026.01.10"
+        },
+        "os": {
+          "name": "Linux",
+          "version": "6.8"
+        },
+        "locale": "en",
+        "timezone": "UTC",
+        "sdk": {
+          "name": "php",
+          "version": "1.0.0",
+          "spec": "1.0.0-draft.1"
+        }
+      }
+    }
+  ]
+}
