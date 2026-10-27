@@ -1,0 +1,72 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  validate:
+    name: schema and examples
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci
+      - run: npm run validate
+      - name: examples are regenerated from the script
+        run: |
+          npm run examples
+          git diff --exit-code -- examples
+
+  mock-server:
+    name: mock server tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mock-server
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: mock-server/package-lock.json
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+
+  docker:
+    name: mock server image
+    needs: [validate, mock-server]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: build
+        run: docker build -f mock-server/Dockerfile -t sdk-spec-mock-server:${{ github.sha }} .
+      - name: smoke test
+        run: |
+          docker run -d --rm -p 8787:8787 --name mock sdk-spec-mock-server:${{ github.sha }}
+          for i in $(seq 1 20); do
+            if curl -fsS http://127.0.0.1:8787/__health; then echo; break; fi
+            sleep 1
+          done
+          curl -fsS http://127.0.0.1:8787/__health | grep -q '"ok":true'
+          docker stop mock
+      - name: push to GHCR
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+          IMAGE="ghcr.io/${GITHUB_REPOSITORY,,}/mock-server"
+          for tag in "${{ github.sha }}" "$(cat VERSION)" latest; do
+            docker tag sdk-spec-mock-server:${{ github.sha }} "$IMAGE:$tag"
+          done
+          docker push --all-tags "$IMAGE"

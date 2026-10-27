@@ -1,0 +1,30 @@
+{
+  "name": "@mango/sdk-spec-mock-server",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Ingest double for SDK conformance tests: validates POST /v1/batch against the spec schema, records every request, replays scripted responses",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "main": "dist/server.js",
+  "bin": {
+    "sdk-spec-mock-server": "dist/cli.js"
+  },
+  "scripts": {
+    "dev": "tsx src/cli.ts",
+    "start": "node dist/cli.js",
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "npm run typecheck && node --import tsx --test test/*.test.ts"
+  },
+  "dependencies": {
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  }
+}
