@@ -1,0 +1,285 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spec.user-monitoring.local/v1/scenario.schema.json",
+  "title": "Conformance scenario",
+  "description": "One executable conformance scenario: the app actions a harness drives and the exact events the mock server must observe. Event names, types and launch types are taken from batch.schema.json so a fixture can never expect something the wire schema rejects. README.md in this folder explains how a harness runs one.",
+  "type": "object",
+  "required": ["spec_version", "id", "platforms", "description", "steps", "expect"],
+  "additionalProperties": false,
+  "properties": {
+    "spec_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(-[0-9A-Za-z.-]+)?$",
+      "description": "Must equal the repository VERSION."
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "description": "Must equal the file name without .json."
+    },
+    "platforms": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/platform" },
+      "description": "SDKs this scenario applies to. An SDK runs every scenario that lists it."
+    },
+    "description": { "type": "string", "minLength": 1 },
+    "config": { "$ref": "#/$defs/config" },
+    "server": {
+      "type": "object",
+      "required": ["respond"],
+      "additionalProperties": false,
+      "description": "Posted to the mock server's POST /__scenario before the first step. Without it the server answers 202 to everything.",
+      "properties": {
+        "respond": { "type": "array", "items": { "$ref": "#/$defs/scripted_response" } }
+      }
+    },
+    "steps": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/step" } },
+    "expect": { "$ref": "#/$defs/expect" }
+  },
+  "$defs": {
+    "platform": { "$ref": "batch.schema.json#/$defs/context/properties/sdk/properties/name" },
+    "scalar": { "type": ["string", "number", "boolean", "null"] },
+    "flat_map": {
+      "type": "object",
+      "additionalProperties": { "$ref": "#/$defs/scalar" }
+    },
+    "uint": { "type": "integer", "minimum": 0 },
+    "config": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "init() options the harness passes. Anything not listed keeps the protocol default.",
+      "properties": {
+        "session_timeout_seconds": { "type": "integer", "minimum": 1 },
+        "denylist_screens": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "flush_at": { "type": "integer", "minimum": 1 },
+        "flush_interval_seconds": { "type": "integer", "minimum": 1 },
+        "consent": { "enum": ["pending", "granted", "denied"] }
+      }
+    },
+    "scripted_response": {
+      "type": "object",
+      "additionalProperties": false,
+      "anyOf": [{ "required": ["status"] }, { "required": ["drop"] }],
+      "properties": {
+        "status": { "enum": [202, 400, 401, 413, 429, 500, 503] },
+        "retry_after": { "$ref": "#/$defs/uint" },
+        "rejected": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["index", "reason"],
+            "additionalProperties": false,
+            "properties": { "index": { "$ref": "#/$defs/uint" }, "reason": { "type": "string", "minLength": 1 } }
+          }
+        },
+        "drop": { "const": true },
+        "delay_ms": { "$ref": "#/$defs/uint" },
+        "repeat": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "step": {
+      "oneOf": [
+        { "$ref": "#/$defs/step_launch" },
+        { "$ref": "#/$defs/step_network" },
+        { "$ref": "#/$defs/step_screen" },
+        { "$ref": "#/$defs/step_track" },
+        { "$ref": "#/$defs/step_tap" },
+        { "$ref": "#/$defs/step_type_text" },
+        { "$ref": "#/$defs/step_identify" },
+        { "$ref": "#/$defs/step_simple" },
+        { "$ref": "#/$defs/step_wait" },
+        { "$ref": "#/$defs/step_assert_requests" }
+      ]
+    },
+    "step_launch": {
+      "type": "object",
+      "required": ["action"],
+      "additionalProperties": false,
+      "properties": { "action": { "const": "launch" } }
+    },
+    "step_network": {
+      "type": "object",
+      "required": ["action", "state"],
+      "additionalProperties": false,
+      "properties": { "action": { "const": "network" }, "state": { "enum": ["offline", "online"] } }
+    },
+    "step_screen": {
+      "type": "object",
+      "required": ["action", "name"],
+      "additionalProperties": false,
+      "properties": { "action": { "const": "screen" }, "name": { "type": "string", "minLength": 1 } }
+    },
+    "step_track": {
+      "type": "object",
+      "required": ["action", "name"],
+      "additionalProperties": false,
+      "properties": {
+        "action": { "const": "track" },
+        "name": { "type": "string", "minLength": 1, "description": "Any string, including names the SDK must refuse locally." },
+        "properties": { "$ref": "#/$defs/flat_map" },
+        "property_count": { "type": "integer", "minimum": 1, "description": "Generate this many distinct keys (k0, k1, ...) with integer values." },
+        "repeat": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "step_tap": {
+      "type": "object",
+      "required": ["action", "element_id"],
+      "additionalProperties": false,
+      "properties": {
+        "action": { "const": "tap" },
+        "element_id": { "type": "string", "minLength": 1 },
+        "label": { "type": "string", "minLength": 1 },
+        "repeat": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "step_type_text": {
+      "type": "object",
+      "required": ["action", "field", "value"],
+      "additionalProperties": false,
+      "properties": {
+        "action": { "const": "type_text" },
+        "field": { "type": "string", "minLength": 1 },
+        "value": { "type": "string", "minLength": 1 }
+      }
+    },
+    "step_identify": {
+      "type": "object",
+      "required": ["action", "user_id"],
+      "additionalProperties": false,
+      "properties": {
+        "action": { "const": "identify" },
+        "user_id": { "type": "string", "minLength": 1 },
+        "traits": { "$ref": "#/$defs/flat_map" }
+      }
+    },
+    "step_simple": {
+      "type": "object",
+      "required": ["action"],
+      "additionalProperties": false,
+      "properties": { "action": { "enum": ["reset", "background", "foreground", "kill_process", "flush"] } }
+    },
+    "step_wait": {
+      "type": "object",
+      "required": ["action", "value"],
+      "additionalProperties": false,
+      "properties": { "action": { "const": "wait_ms" }, "value": { "type": "integer", "minimum": 1 } }
+    },
+    "step_assert_requests": {
+      "type": "object",
+      "required": ["action", "count"],
+      "additionalProperties": false,
+      "properties": { "action": { "const": "assert_requests" }, "count": { "$ref": "#/$defs/uint" } }
+    },
+    "absent": {
+      "type": "object",
+      "required": ["$absent"],
+      "additionalProperties": false,
+      "properties": { "$absent": { "const": true } },
+      "description": "The field must be missing from the event."
+    },
+    "string_or_absent": { "anyOf": [{ "type": "string", "minLength": 1 }, { "$ref": "#/$defs/absent" }] },
+    "uint_or_absent": { "anyOf": [{ "$ref": "#/$defs/uint" }, { "$ref": "#/$defs/absent" }] },
+    "property_matcher": {
+      "type": "object",
+      "description": "Partial match: every listed key must deep-equal the event's value, $count fixes the number of keys, an absent marker forbids a key.",
+      "properties": { "$count": { "$ref": "#/$defs/uint" } },
+      "additionalProperties": { "anyOf": [{ "$ref": "#/$defs/scalar" }, { "$ref": "#/$defs/absent" }] }
+    },
+    "matcher": {
+      "type": "object",
+      "required": ["type"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "$ref": "batch.schema.json#/$defs/event/properties/type" },
+        "name": { "$ref": "batch.schema.json#/$defs/event/properties/name" },
+        "launch_type": { "$ref": "batch.schema.json#/$defs/event/properties/launch_type" },
+        "user_id": { "$ref": "#/$defs/string_or_absent" },
+        "session_id": { "anyOf": [{ "$ref": "batch.schema.json#/$defs/uuid" }, { "$ref": "#/$defs/absent" }] },
+        "seq": { "$ref": "#/$defs/uint" },
+        "screen": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "name": { "type": "string", "minLength": 1 },
+            "previous": { "$ref": "#/$defs/string_or_absent" },
+            "previous_duration_ms": { "$ref": "#/$defs/uint_or_absent" },
+            "duration_ms": { "$ref": "#/$defs/uint_or_absent" },
+            "route": { "$ref": "#/$defs/string_or_absent" }
+          }
+        },
+        "element": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "id": { "$ref": "#/$defs/string_or_absent" },
+            "label": { "$ref": "#/$defs/string_or_absent" },
+            "type": { "$ref": "#/$defs/string_or_absent" },
+            "screen": { "$ref": "#/$defs/string_or_absent" }
+          }
+        },
+        "properties": { "anyOf": [{ "$ref": "#/$defs/property_matcher" }, { "$ref": "#/$defs/absent" }] },
+        "traits": { "anyOf": [{ "$ref": "#/$defs/property_matcher" }, { "$ref": "#/$defs/absent" }] },
+        "duration_ms": { "$ref": "#/$defs/uint" },
+        "screens_viewed": { "$ref": "#/$defs/uint" },
+        "events_count": { "$ref": "#/$defs/uint" },
+        "$repeat": { "type": "integer", "minimum": 1, "description": "This matcher consumes that many consecutive events." },
+        "$platforms": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/platform" },
+          "description": "The matcher applies on these platforms only and is skipped on the others."
+        },
+        "$session": { "type": "string", "minLength": 1, "description": "Session label. Events with the same label share session_id; different labels have different session_ids." },
+        "$label": { "type": "string", "minLength": 1, "description": "Names this event (the last one when $repeat is used) for $same_timestamp_as." },
+        "$same_timestamp_as": { "type": "string", "minLength": 1, "description": "The timestamp must equal the labelled event's timestamp." }
+      }
+    },
+    "expect": {
+      "type": "object",
+      "required": ["events"],
+      "additionalProperties": false,
+      "properties": {
+        "requests": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "Bounds on the number of POST /v1/batch requests the mock server recorded, whatever their status.",
+          "properties": { "min": { "$ref": "#/$defs/uint" }, "max": { "$ref": "#/$defs/uint" } }
+        },
+        "events": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/matcher" },
+          "description": "The exact ordered list of events over every request the server answered 202, concatenated in arrival order."
+        },
+        "checks": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": ["event_ids_unique", "seq_contiguous_per_session", "device_id_constant", "session_end_consistent", "rejected_requests_resent"]
+          }
+        },
+        "payload_never_contains": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 },
+          "description": "Strings that must not occur anywhere in any recorded request body, decoded."
+        },
+        "local_rejections": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "reason"],
+            "additionalProperties": false,
+            "properties": {
+              "name": { "type": "string", "minLength": 1 },
+              "reason": { "enum": ["properties_too_many", "property_key_too_long", "property_value_too_long", "invalid_property", "reserved_name", "invalid_name", "invalid_user_id", "event_too_large"] }
+            }
+          },
+          "description": "Events the SDK must refuse before queueing, in order, each with a logged warning."
+        }
+      }
+    }
+  }
+}

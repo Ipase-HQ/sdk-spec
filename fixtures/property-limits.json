@@ -1,0 +1,27 @@
+{
+  "spec_version": "1.0.0-draft.2",
+  "id": "property-limits",
+  "platforms": ["kotlin", "swift", "js", "php"],
+  "description": "An event with 101 property keys and a host app event named with the reserved $ prefix are both refused locally with a logged warning and never sent. An event with exactly 100 keys goes through.",
+  "steps": [
+    { "action": "launch" },
+    { "action": "track", "name": "too_many", "property_count": 101 },
+    { "action": "track", "name": "$checkout" },
+    { "action": "track", "name": "fine", "property_count": 100 },
+    { "action": "flush" },
+    { "action": "assert_requests", "count": 1 }
+  ],
+  "expect": {
+    "requests": { "min": 1, "max": 1 },
+    "events": [
+      { "type": "session_start", "launch_type": "cold", "$platforms": ["kotlin", "swift", "js"] },
+      { "type": "track", "name": "$app_installed", "$platforms": ["kotlin", "swift", "js"] },
+      { "type": "track", "name": "fine", "properties": { "$count": 100 } }
+    ],
+    "checks": ["event_ids_unique", "seq_contiguous_per_session"],
+    "local_rejections": [
+      { "name": "too_many", "reason": "properties_too_many" },
+      { "name": "$checkout", "reason": "reserved_name" }
+    ]
+  }
+}

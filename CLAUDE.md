@@ -13,6 +13,6 @@ This repo is the contract between the SDKs (sdk-js, sdk-php, sdk-kotlin, sdk-swi
 ## Commands
 
 - npm install
-- npm run validate (ajv against schema and examples, VERSION against the fixtures)
+- npm run validate (ajv against schema and examples, every fixture against fixtures/scenario.schema.json and VERSION)
 - npm run examples (regenerate examples/ from the script)
 - cd mock-server && npm test

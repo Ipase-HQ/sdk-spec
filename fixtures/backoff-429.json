@@ -1,0 +1,34 @@
+{
+  "spec_version": "1.0.0-draft.2",
+  "id": "backoff-429",
+  "platforms": ["kotlin", "swift", "js", "php"],
+  "description": "A 429 with Retry-After 30 produces no request for 30 seconds, even on an explicit flush, and keeps the queue intact: the second request carries exactly the events of the first. On php there are no session events and every event carries seq 0 and the nil session id.",
+  "server": {
+    "respond": [
+      { "status": 429, "retry_after": 30 },
+      { "status": 202 }
+    ]
+  },
+  "steps": [
+    { "action": "launch" },
+    { "action": "track", "name": "button_tap", "repeat": 3 },
+    { "action": "flush" },
+    { "action": "assert_requests", "count": 1 },
+    { "action": "wait_ms", "value": 15000 },
+    { "action": "flush" },
+    { "action": "assert_requests", "count": 1 },
+    { "action": "wait_ms", "value": 20000 },
+    { "action": "flush" },
+    { "action": "assert_requests", "count": 2 }
+  ],
+  "expect": {
+    "requests": { "min": 2, "max": 2 },
+    "events": [
+      { "type": "session_start", "launch_type": "cold", "$platforms": ["kotlin", "swift", "js"], "$session": "s1" },
+      { "type": "track", "name": "$app_installed", "$platforms": ["kotlin", "swift", "js"], "$session": "s1" },
+      { "type": "track", "name": "button_tap", "$repeat": 3, "$platforms": ["kotlin", "swift", "js"], "$session": "s1" },
+      { "type": "track", "name": "button_tap", "$repeat": 3, "seq": 0, "session_id": "00000000-0000-0000-0000-000000000000", "$platforms": ["php"] }
+    ],
+    "checks": ["event_ids_unique", "seq_contiguous_per_session", "device_id_constant", "rejected_requests_resent"]
+  }
+}

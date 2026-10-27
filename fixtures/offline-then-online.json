@@ -1,0 +1,24 @@
+{
+  "spec_version": "1.0.0-draft.2",
+  "id": "offline-then-online",
+  "platforms": ["kotlin", "swift", "js"],
+  "description": "Events captured without a network are delivered in order after reconnect, none lost, none duplicated. The 30-event trigger and the 15 second timer both fire while offline and fail; the explicit flush after reconnect drains the whole queue in one batch.",
+  "steps": [
+    { "action": "launch" },
+    { "action": "network", "state": "offline" },
+    { "action": "track", "name": "button_tap", "repeat": 50 },
+    { "action": "wait_ms", "value": 20000 },
+    { "action": "network", "state": "online" },
+    { "action": "flush" },
+    { "action": "assert_requests", "count": 1 }
+  ],
+  "expect": {
+    "requests": { "min": 1, "max": 1 },
+    "events": [
+      { "type": "session_start", "launch_type": "cold", "user_id": { "$absent": true }, "$session": "s1" },
+      { "type": "track", "name": "$app_installed", "$session": "s1" },
+      { "type": "track", "name": "button_tap", "$repeat": 50, "$session": "s1" }
+    ],
+    "checks": ["event_ids_unique", "seq_contiguous_per_session", "device_id_constant"]
+  }
+}

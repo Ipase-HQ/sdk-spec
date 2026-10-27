@@ -14,9 +14,12 @@ Every change to the contract (schema, protocol, fixtures) gets a line here, and 
 - GitHub Actions workflow: validate, mock-server tests, Docker image build with a smoke test, push to GHCR on main.
 - Schema: reserved name `$tap` for auto-captured taps and clicks (element required, with id or label) and `$events_dropped` as a track event carrying properties.count. The reserved list is closed: `$app_installed`, `$app_updated`, `$app_backgrounded`, `$app_foregrounded`, `$tap`, `$events_dropped`. Any other name starting with `$` is invalid.
 - Schema: context.platform (android, ios, web, desktop, server) is required; context.browser (name, version) is optional and sent by the js SDK; context.sdk.spec is required and must be a semver string; app.bundle_id is required on every platform except server.
+- fixtures/: one executable file per scenario (offline-then-online, process-kill, backoff-429, session-timeout, identity-stitching, privacy, property-limits) with the steps a harness drives and the exact events the mock server must observe, matched with $repeat, $platforms, $session, $label and $same_timestamp_as, plus checks, request bounds, forbidden strings and local rejections. fixtures/scenario.schema.json describes the format and npm run validate checks every file against it.
+- Mock server: reserved_name comes from the schema; the test suite loads every fixture through POST /__scenario.
 
 ### Changed
 
+- fixtures/scenarios.json is gone; its seven scenarios became the files above. The mock server still accepts a whole fixture object on POST /__scenario.
 - Schema: event_id must be a lowercase UUIDv7 (pattern, not just format uuid). device_id and session_id must be lowercase UUIDs; the nil UUID is the session id of a server-side event with no client session.
 - Schema: each event type now has an exact field set. Fields that belong to another type are rejected (a track with launch_type, a screen with name, traits outside identify). session_end requires duration_ms, screens_viewed and events_count. screen_exit requires screen.duration_ms and may not carry previous or properties. screen events may not carry screen.duration_ms, and screen.previous and screen.previous_duration_ms come together.
 - Schema: seq, duration_ms, screens_viewed and events_count are capped at 4294967295 so they fit the ClickHouse UInt32 columns. context.device.screen must be width x height.

@@ -1,0 +1,30 @@
+{
+  "spec_version": "1.0.0-draft.2",
+  "id": "privacy",
+  "platforms": ["kotlin", "swift", "js"],
+  "description": "Typed text never appears in any payload. A tap is auto-captured as $tap with the element id, label and screen. A denylisted screen produces nothing: the screen it replaces gets a screen_exit, and neither the screen, nor taps on it, nor text typed on it leave the device.",
+  "config": { "denylist_screens": ["Payment"] },
+  "steps": [
+    { "action": "launch" },
+    { "action": "screen", "name": "Login" },
+    { "action": "type_text", "field": "password", "value": "hunter2-secret" },
+    { "action": "tap", "element_id": "login_button", "label": "Sign in" },
+    { "action": "screen", "name": "Payment" },
+    { "action": "type_text", "field": "card_number", "value": "4111111111111111" },
+    { "action": "tap", "element_id": "pay_button", "label": "Pay now" },
+    { "action": "flush" },
+    { "action": "assert_requests", "count": 1 }
+  ],
+  "expect": {
+    "requests": { "min": 1, "max": 1 },
+    "events": [
+      { "type": "session_start", "launch_type": "cold", "$session": "s1" },
+      { "type": "track", "name": "$app_installed", "$session": "s1" },
+      { "type": "screen", "screen": { "name": "Login", "previous": { "$absent": true } }, "$session": "s1" },
+      { "type": "track", "name": "$tap", "element": { "id": "login_button", "label": "Sign in", "screen": "Login" }, "$session": "s1" },
+      { "type": "screen_exit", "screen": { "name": "Login" }, "$session": "s1" }
+    ],
+    "checks": ["event_ids_unique", "seq_contiguous_per_session"],
+    "payload_never_contains": ["hunter2-secret", "4111111111111111", "Payment", "pay_button", "Pay now"]
+  }
+}

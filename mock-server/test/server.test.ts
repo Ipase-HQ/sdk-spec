@@ -15,7 +15,9 @@ const examplesDir = new URL("../../examples/valid/", import.meta.url);
 const validExamples = readdirSync(examplesDir).filter((f) => f.endsWith(".json")).sort();
 const example = (name: string): Batch => JSON.parse(readFileSync(new URL(name, examplesDir), "utf8"));
 const specVersion = readFileSync(new URL("../../VERSION", import.meta.url), "utf8").trim();
-const scenariosFile = JSON.parse(readFileSync(new URL("../../fixtures/scenarios.json", import.meta.url), "utf8"));
+const fixturesDir = new URL("../../fixtures/", import.meta.url);
+const fixtureFiles = readdirSync(fixturesDir).filter((f) => f.endsWith(".json") && !f.endsWith(".schema.json")).sort();
+const fixture = (name: string): any => JSON.parse(readFileSync(new URL(name, fixturesDir), "utf8"));
 
 const minimal = (): Batch => structuredClone(example("minimal.json"));
 const withProperties = (count: number, value: unknown = 1): Batch => {
@@ -320,8 +322,18 @@ describe("scripted responses", () => {
     assert.deepEqual(r.json.rejected, [{ index: 0, reason: "properties_too_many" }]);
   });
 
-  it("accepts a whole scenario object from fixtures/scenarios.json", async () => {
-    const backoff = scenariosFile.scenarios.find((s: any) => s.id === "backoff-429");
+  it("loads every conformance fixture as a scenario", async () => {
+    for (const file of fixtureFiles) {
+      const scenario = fixture(file);
+      const loaded = await post("/__scenario", scenario, { auth: false });
+      assert.equal(loaded.status, 200, `${file}: ${JSON.stringify(loaded.json)}`);
+      const queued = (scenario.server?.respond ?? []).reduce((n: number, r: any) => n + (r.repeat ?? 1), 0);
+      assert.deepEqual(loaded.json, { ok: true, id: scenario.id, queued });
+    }
+  });
+
+  it("accepts a whole scenario object from fixtures/backoff-429.json", async () => {
+    const backoff = fixture("backoff-429.json");
     const loaded = await post("/__scenario", backoff, { auth: false });
     assert.deepEqual(loaded.json, { ok: true, id: "backoff-429", queued: 2 });
     const first = await postBatch(minimal());

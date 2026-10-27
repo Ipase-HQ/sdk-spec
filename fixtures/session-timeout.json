@@ -1,0 +1,31 @@
+{
+  "spec_version": "1.0.0-draft.2",
+  "id": "session-timeout",
+  "platforms": ["kotlin", "swift", "js"],
+  "description": "Background for one second less than the timeout keeps the session and emits $app_foregrounded. Background for one second more ends it: session_end backdated to the last activity (the second $app_backgrounded), then a session_start with launch_type resume. Each background triggers a flush, so three requests.",
+  "config": { "session_timeout_seconds": 300 },
+  "steps": [
+    { "action": "launch" },
+    { "action": "background" },
+    { "action": "wait_ms", "value": 299000 },
+    { "action": "foreground" },
+    { "action": "background" },
+    { "action": "wait_ms", "value": 301000 },
+    { "action": "foreground" },
+    { "action": "flush" },
+    { "action": "assert_requests", "count": 3 }
+  ],
+  "expect": {
+    "requests": { "min": 3, "max": 3 },
+    "events": [
+      { "type": "session_start", "launch_type": "cold", "$session": "s1" },
+      { "type": "track", "name": "$app_installed", "$session": "s1" },
+      { "type": "track", "name": "$app_backgrounded", "$session": "s1" },
+      { "type": "track", "name": "$app_foregrounded", "$session": "s1" },
+      { "type": "track", "name": "$app_backgrounded", "$session": "s1", "$label": "last_background" },
+      { "type": "session_end", "screens_viewed": 0, "events_count": 6, "$session": "s1", "$same_timestamp_as": "last_background" },
+      { "type": "session_start", "launch_type": "resume", "$session": "s2" }
+    ],
+    "checks": ["event_ids_unique", "seq_contiguous_per_session", "device_id_constant", "session_end_consistent"]
+  }
+}

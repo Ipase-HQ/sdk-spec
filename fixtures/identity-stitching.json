@@ -1,0 +1,30 @@
+{
+  "spec_version": "1.0.0-draft.2",
+  "id": "identity-stitching",
+  "platforms": ["kotlin", "swift", "js"],
+  "description": "Events before identify carry only device_id, events after carry user_id too. reset() ends the session (its session_end still carries the user id), clears user_id, keeps device_id, and starts a new session with launch_type warm.",
+  "steps": [
+    { "action": "launch" },
+    { "action": "track", "name": "browse" },
+    { "action": "identify", "user_id": "u_123", "traits": { "plan": "free" } },
+    { "action": "track", "name": "purchase" },
+    { "action": "reset" },
+    { "action": "track", "name": "browse" },
+    { "action": "flush" },
+    { "action": "assert_requests", "count": 1 }
+  ],
+  "expect": {
+    "requests": { "min": 1, "max": 1 },
+    "events": [
+      { "type": "session_start", "launch_type": "cold", "user_id": { "$absent": true }, "$session": "s1" },
+      { "type": "track", "name": "$app_installed", "user_id": { "$absent": true }, "$session": "s1" },
+      { "type": "track", "name": "browse", "user_id": { "$absent": true }, "$session": "s1" },
+      { "type": "identify", "user_id": "u_123", "traits": { "plan": "free", "$count": 1 }, "$session": "s1" },
+      { "type": "track", "name": "purchase", "user_id": "u_123", "$session": "s1" },
+      { "type": "session_end", "user_id": "u_123", "screens_viewed": 0, "events_count": 6, "$session": "s1" },
+      { "type": "session_start", "launch_type": "warm", "user_id": { "$absent": true }, "$session": "s2" },
+      { "type": "track", "name": "browse", "user_id": { "$absent": true }, "$session": "s2" }
+    ],
+    "checks": ["event_ids_unique", "seq_contiguous_per_session", "device_id_constant", "session_end_consistent"]
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "spec_version": "1.0.0-draft.2",
+  "id": "process-kill",
+  "platforms": ["kotlin", "swift"],
+  "description": "Events persisted before a kill arrive on the next launch. The dead session's screen_exit and session_end are emitted on that launch, both backdated to its last activity, before the new session's cold session_start. No $app_installed on the second launch because it is not the first run.",
+  "config": { "session_timeout_seconds": 300 },
+  "steps": [
+    { "action": "launch" },
+    { "action": "screen", "name": "Feed" },
+    { "action": "track", "name": "like", "repeat": 5 },
+    { "action": "kill_process" },
+    { "action": "wait_ms", "value": 400000 },
+    { "action": "launch" },
+    { "action": "flush" },
+    { "action": "assert_requests", "count": 1 }
+  ],
+  "expect": {
+    "requests": { "min": 1, "max": 1 },
+    "events": [
+      { "type": "session_start", "launch_type": "cold", "$session": "s1" },
+      { "type": "track", "name": "$app_installed", "$session": "s1" },
+      { "type": "screen", "screen": { "name": "Feed", "previous": { "$absent": true } }, "$session": "s1" },
+      { "type": "track", "name": "like", "$repeat": 5, "$session": "s1", "$label": "last_like" },
+      { "type": "screen_exit", "screen": { "name": "Feed" }, "$session": "s1", "$same_timestamp_as": "last_like" },
+      { "type": "session_end", "screens_viewed": 1, "events_count": 10, "$session": "s1", "$same_timestamp_as": "last_like" },
+      { "type": "session_start", "launch_type": "cold", "$session": "s2" }
+    ],
+    "checks": ["event_ids_unique", "seq_contiguous_per_session", "device_id_constant", "session_end_consistent"]
+  }
+}

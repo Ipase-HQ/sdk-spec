@@ -28,7 +28,7 @@ Every request is recorded whatever the outcome.
 
 ## POST /__scenario
 
-Loads a script and clears the recording. The body is either a scenario object from ../fixtures/scenarios.json (its server.respond is used) or { "id": "...", "respond": [ ... ] }. Each entry:
+Loads a script and clears the recording. The body is either a whole fixture object from ../fixtures/<id>.json (its id and server.respond are used, the rest is ignored) or { "id": "...", "respond": [ ... ] }. Each entry:
 
 | Field | Meaning |
 | --- | --- |
