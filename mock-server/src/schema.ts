@@ -50,10 +50,11 @@ export function loadValidators(schemaPath: string = DEFAULT_SCHEMA_PATH): Valida
   };
 }
 
-// Maps an event's validation errors to the protocol reason code. Only the two limits the
-// schema expresses get their own code; everything else is schema_invalid.
+// Maps an event's validation errors to the protocol reason code. The reserved name rule and the
+// two property limits the schema expresses get their own code; everything else is schema_invalid.
 export function reasonFor(errors: ErrorObject[] | null | undefined): RejectionReason {
   for (const e of errors ?? []) {
+    if (e.instancePath === "/name" && ["pattern", "enum", "anyOf"].includes(e.keyword)) return "reserved_name";
     if (e.keyword === "maxProperties" && /\/(properties|traits)$/.test(e.instancePath)) return "properties_too_many";
     if (e.keyword === "maxLength" && /\/(properties|traits)\/[^/]+$/.test(e.instancePath)) return "property_value_too_long";
   }

@@ -219,6 +219,21 @@ describe("per-event rejections inside a 202", () => {
     assert.deepEqual(r.json, { accepted: 0, rejected: [{ index: 0, reason: "property_value_too_long" }] });
   });
 
+  it("reserved_name for a host app name starting with $", async () => {
+    const b = minimal();
+    b.batch[0].name = "$checkout";
+    const r = await postBatch(b);
+    assert.equal(r.status, 202);
+    assert.deepEqual(r.json, { accepted: 0, rejected: [{ index: 0, reason: "reserved_name" }] });
+  });
+
+  it("schema_invalid, not reserved_name, for a reserved name used wrongly", async () => {
+    const b = minimal();
+    b.batch[0].name = "$tap"; // reserved and allowed, but $tap requires element
+    const r = await postBatch(b);
+    assert.deepEqual(r.json.rejected, [{ index: 0, reason: "schema_invalid" }]);
+  });
+
   it("event_too_large for an event over 32 KB that is otherwise valid", async () => {
     const r = await postBatch(withProperties(40, "x".repeat(1000)));
     assert.deepEqual(r.json, { accepted: 0, rejected: [{ index: 0, reason: "event_too_large" }] });

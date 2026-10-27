@@ -22,7 +22,7 @@ What happens, in order. Steps 1 to 5 are real checks and never consume the scrip
 4. More than 500 events: 413.
 5. The envelope (sent_at, batch) is validated against ../schema/batch.schema.json: 400 schema_invalid with details.
 6. If the script has a response queued it is used and consumed.
-7. Otherwise 202. Each event is validated on its own and failures land in rejected while the rest are accepted: schema_invalid, properties_too_many and property_value_too_long come from the schema, event_too_large from the 32 KB cap. Scripted rejections are merged in and win on the same index. reserved_name, duplicate_event_id and timestamp_out_of_range are only ever scripted.
+7. Otherwise 202. Each event is validated on its own and failures land in rejected while the rest are accepted: schema_invalid, reserved_name, properties_too_many and property_value_too_long come from the schema, event_too_large from the 32 KB cap. Scripted rejections are merged in and win on the same index. duplicate_event_id and timestamp_out_of_range are only ever scripted.
 
 Every request is recorded whatever the outcome.
 
