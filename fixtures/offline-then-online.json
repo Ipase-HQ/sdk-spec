@@ -1,8 +1,8 @@
 {
-  "spec_version": "1.0.0-draft.3",
+  "spec_version": "1.0.0-draft.4",
   "id": "offline-then-online",
   "platforms": ["kotlin", "swift", "js"],
-  "description": "Events captured without a network are delivered in order after reconnect, none lost, none duplicated. The 30-event trigger and the 15 second timer both fire while offline and fail; the explicit flush after reconnect drains the whole queue in one batch.",
+  "description": "Events captured without a network are delivered in order after reconnect, none lost, none duplicated. The 30-event trigger fires while offline and fails, and its retries back off. Going online ends that network-failure wait (protocol.md section 4), so the queue drains in one batch, whether the end of the wait or the explicit flush sends it.",
   "steps": [
     { "action": "launch" },
     { "action": "network", "state": "offline" },

@@ -32,7 +32,7 @@
         "sdk": {
           "name": "kotlin",
           "version": "1.0.0",
-          "spec": "1.0.0-draft.3"
+          "spec": "1.0.0-draft.4"
         }
       }
     },
@@ -67,7 +67,7 @@
         "sdk": {
           "name": "kotlin",
           "version": "1.0.0",
-          "spec": "1.0.0-draft.3"
+          "spec": "1.0.0-draft.4"
         }
       }
     },
@@ -104,7 +104,7 @@
         "sdk": {
           "name": "kotlin",
           "version": "1.0.0",
-          "spec": "1.0.0-draft.3"
+          "spec": "1.0.0-draft.4"
         }
       }
     },
@@ -145,7 +145,7 @@
         "sdk": {
           "name": "kotlin",
           "version": "1.0.0",
-          "spec": "1.0.0-draft.3"
+          "spec": "1.0.0-draft.4"
         }
       }
     },
@@ -184,7 +184,7 @@
         "sdk": {
           "name": "kotlin",
           "version": "1.0.0",
-          "spec": "1.0.0-draft.3"
+          "spec": "1.0.0-draft.4"
         }
       }
     },
@@ -223,7 +223,7 @@
         "sdk": {
           "name": "kotlin",
           "version": "1.0.0",
-          "spec": "1.0.0-draft.3"
+          "spec": "1.0.0-draft.4"
         }
       }
     },
@@ -261,7 +261,7 @@
         "sdk": {
           "name": "kotlin",
           "version": "1.0.0",
-          "spec": "1.0.0-draft.3"
+          "spec": "1.0.0-draft.4"
         }
       }
     },
@@ -296,7 +296,7 @@
         "sdk": {
           "name": "kotlin",
           "version": "1.0.0",
-          "spec": "1.0.0-draft.3"
+          "spec": "1.0.0-draft.4"
         }
       }
     },
@@ -333,7 +333,7 @@
         "sdk": {
           "name": "kotlin",
           "version": "1.0.0",
-          "spec": "1.0.0-draft.3"
+          "spec": "1.0.0-draft.4"
         }
       }
     }

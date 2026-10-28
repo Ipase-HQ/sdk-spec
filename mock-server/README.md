@@ -12,6 +12,10 @@ Plain node:http plus ajv, no framework. Tests use node:test.
 - npm run build, then npm start: run the compiled server from dist/
 - From the sdk-spec root: docker build -f mock-server/Dockerfile -t sdk-spec-mock-server . (the image carries schema/, fixtures/ and VERSION; FIXTURES_DIR overrides where POST /__verify reads fixtures)
 
+## CORS
+
+OPTIONS on any path answers 204 with the preflight headers of ../protocol.md section 2.6 (Allow-Origin `*`, Allow-Methods POST, Allow-Headers Authorization, Content-Type, Content-Encoding and X-SDK, Max-Age 7200). A preflight is never recorded and never consumes the script. Every other response carries Access-Control-Allow-Origin `*` and exposes Retry-After, so a browser-like harness such as happy-dom runs with its same-origin checks on.
+
 ## POST /v1/batch
 
 What happens, in order. Steps 1 to 5 are real checks and never consume the script.

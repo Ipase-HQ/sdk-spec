@@ -1,6 +1,6 @@
 # Wire protocol v1
 
-Status: 1.0.0-draft.3.
+Status: 1.0.0-draft.4.
 
 This document and schema/batch.schema.json are everything an SDK author needs to build a client. The fixtures under fixtures/ are the acceptance test, run against mock-server/. When this document and the schema disagree, the schema wins and this document has a bug. Development plan sections 4 and 8 hold the reasoning; ../docs/adr holds the decisions that go beyond the plan.
 
@@ -52,6 +52,23 @@ A browser adds Origin on its own. For write keys the server checks Origin agains
 
 A request that has not completed after 30 seconds is abandoned and counts as a network failure.
 
+### 2.6 Browsers and CORS
+
+A request from a web page or an Electron renderer is cross-origin, and Authorization, Content-Encoding, X-SDK and Content-Type application/json make it non-simple, so the browser sends a preflight first. The preflight carries no Authorization, so the server cannot know the project yet. It answers every OPTIONS /v1/batch the same way and checks Origin on the POST itself (section 2.3).
+
+| Response | Header | Value |
+| --- | --- | --- |
+| OPTIONS /v1/batch, always 204 with no body | Access-Control-Allow-Origin | `*` |
+| | Access-Control-Allow-Methods | `POST` |
+| | Access-Control-Allow-Headers | `Authorization, Content-Type, Content-Encoding, X-SDK` |
+| | Access-Control-Max-Age | `7200` |
+| POST /v1/batch, every status | Access-Control-Allow-Origin | `*` |
+| | Access-Control-Expose-Headers | `Retry-After` |
+
+- `*` is allowed because the SDK never sends credentials cross-origin: fetch runs with credentials omit or the default same-origin, never include. A wildcard in Access-Control-Allow-Headers would not cover Authorization, so the headers are listed.
+- Every POST response carries both headers, 401, 413, 429 and 503 included. Without Allow-Origin the browser hides the response and the SDK sees a network failure; without Expose-Headers it cannot read Retry-After and falls back to the computed wait.
+- The mock server answers the same preflight on every path and adds the two headers to every response, so a browser-like conformance harness keeps its same-origin checks on.
+
 ## 3. Responses
 
 | Status | Meaning | Body | SDK behaviour |
@@ -86,6 +103,7 @@ A rejected event is gone. The SDK does not resend it and the server does not cou
 - Backoff. Retry attempt n, counting from 1, waits `min(300, 2^(n-1))` seconds multiplied by a random factor drawn uniformly from 0.5 to 1.5. That is 1 s, 2 s, 4 s, 8 s and so on up to a 300 s ceiling, each jittered. The counter resets on every response that is not a retry case and on launch.
 - Retry-After on 429 and 503 replaces the computed wait exactly, without jitter, and does not advance the counter. A 429 or 503 without Retry-After uses the computed wait.
 - A wait freezes sending. While a wait is in progress no trigger sends a request: not the event count, not the timer, not background, not flush(). Events keep queueing. When the wait ends the SDK sends immediately if the queue is not empty.
+- An online signal ends a network-failure wait. When the wait in progress was started by a network failure (no response: DNS, TLS, timeout, connection dropped) and the platform reports that connectivity came back, the wait ends at once and the SDK sends immediately if the queue is not empty. The signal is ConnectivityManager.NetworkCallback.onAvailable on Android, an NWPathMonitor update with status satisfied on iOS, and the window online event on the web and desktop. The backoff counter is not reset; the next response decides that as usual. An online signal never shortens a wait started by a 5xx, and a Retry-After wait from 429 or 503 always runs in full. With no network-failure wait in progress the signal does nothing.
 - One request is in flight at a time per SDK instance. Its events are marked in flight and never included in another batch. On 202 they leave the queue. On any other outcome the mark is cleared and the next attempt builds a fresh batch from the queue, which may now hold newer events. The mark lives in memory only, so a process that dies mid-request resends those events on the next launch.
 - On 413 the SDK halves the batch and sends the first half, then the second, each under the normal rules. An event that gets a 413 on its own is dropped with a logged warning.
 
@@ -267,7 +285,7 @@ The php SDK runs inside the tenant's backend and has no sessions or screens of i
 
 - Persist first. Every event is written to durable storage on a background thread before any network activity. track() and friends return immediately. Storage: SQLite on Android and iOS, IndexedDB with a localStorage fallback on the web, the Laravel queue in php.
 - Capacity: 10,000 events. When full, the oldest event that is not in flight is dropped and dropped_count is incremented and persisted. The count is reported as $events_dropped (section 7).
-- Triggers: 30 queued events (`flushAt`), every 15 seconds while the queue is not empty (`flushInterval`), the app going to the background, explicit flush(), and the end of a retry wait. Not launch. The php SDK uses 100 events and 5 seconds.
+- Triggers: 30 queued events (`flushAt`), every 15 seconds while the queue is not empty (`flushInterval`), the app going to the background, explicit flush(), and the end of a retry wait, whether it ran out or an online signal ended it (section 4). Not launch. The php SDK uses 100 events and 5 seconds.
 - Batch assembly: queue order, which is seq order within a session and insertion order across sessions. At most 500 events, and the SDK stops adding events before the serialized body would exceed 1 MB. Events from different sessions may share a batch.
 - One request in flight at a time, as in section 4.
 - Background flush: Android hands the request to WorkManager and iOS to a background URLSession configuration so it completes after the app is suspended. The web uses fetch with keepalive on visibilitychange and pagehide and keeps those bodies under 64 KB by sending smaller batches; sendBeacon is not used because it cannot carry the Authorization header.
@@ -294,7 +312,9 @@ Enabled by the `autocapture` init option, `{ screens: true, taps: true }` by def
 | web and desktop | The initial load and every History API pushState, replaceState and popstate. screen.name is the pathname with numeric and UUID segments replaced by :id, screen.route is the pathname | Delegated click on button, a, input of type button or submit, and any element with role=button. element.id is data-monitor-id, else the id attribute; element.label the aria-label, else the trimmed text content; element.type the lowercase tag name |
 | server | none | none |
 
-A $tap is emitted only when element.id or element.label is available. element.screen is the visible screen's name whenever there is one.
+A $tap is emitted only when element.id or element.label is available. element.screen is the visible screen's name whenever there is one. A screen() call makes its screen the visible one just as an auto-captured screen does.
+
+On web and desktop the captured screen name comes from the pathname, so it can never equal a host-chosen name such as Login, and the initial load always emits an entry screen. The conformance harness therefore turns screen auto-capture off there and calls screen(name) (fixtures/README.md, the screen step). Tap auto-capture stays on.
 
 ## 15. Local validation
 

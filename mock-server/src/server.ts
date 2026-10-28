@@ -13,6 +13,19 @@ export const MAX_EVENTS_PER_BATCH = 500;
 export const MAX_BODY_BYTES = 1024 * 1024; // 1 MB on the wire, compressed or not
 export const MAX_EVENT_BYTES = 32 * 1024; // 32 KB per serialized event
 
+// CORS as protocol.md section 2.6 states it. Every response carries CORS_HEADERS, and OPTIONS on any
+// path answers the preflight, so browser-like harnesses keep their same-origin checks on.
+export const CORS_HEADERS = {
+  "access-control-allow-origin": "*",
+  "access-control-expose-headers": "Retry-After",
+} as const;
+export const PREFLIGHT_HEADERS = {
+  ...CORS_HEADERS,
+  "access-control-allow-methods": "POST",
+  "access-control-allow-headers": "Authorization, Content-Type, Content-Encoding, X-SDK",
+  "access-control-max-age": "7200",
+} as const;
+
 export interface MockServerOptions {
   schemaPath?: string;
   versionPath?: string;
@@ -55,6 +68,12 @@ async function route(req: IncomingMessage, res: ServerResponse, ctx: Context): P
   const { pathname } = new URL(req.url ?? "/", "http://mock");
   const method = req.method ?? "GET";
 
+  // A preflight is not a batch: it is answered before routing and never recorded.
+  if (method === "OPTIONS") {
+    res.writeHead(204, PREFLIGHT_HEADERS);
+    res.end();
+    return;
+  }
   if (method === "POST" && pathname === "/v1/batch") return handleBatch(req, res, ctx);
   if (method === "POST" && pathname === "/__scenario") return handleScenario(req, res, ctx);
   if (method === "POST" && pathname === "/__verify") return handleVerify(req, res, ctx);
@@ -267,6 +286,6 @@ function flattenHeaders(req: IncomingMessage): Record<string, string> {
 }
 
 function sendJson(res: ServerResponse, status: number, payload: unknown, extraHeaders: Record<string, string> = {}): void {
-  res.writeHead(status, { "content-type": "application/json", ...extraHeaders });
+  res.writeHead(status, { "content-type": "application/json", ...CORS_HEADERS, ...extraHeaders });
   res.end(JSON.stringify(payload));
 }

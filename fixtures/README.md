@@ -18,7 +18,7 @@ Each SDK repository has a harness. It drives the steps and reports what the SDK 
 
 1. Starts from a fresh install: no persisted device id, session, queue or consent state.
 2. Starts the mock server image at the VERSION the SDK was built against, and posts the whole fixture object to POST /__scenario. That loads `server.respond` and clears the recording.
-3. Initialises the SDK with the mock server as endpoint, a test write key (or server key for php) and the options in `config`. Anything not in `config` keeps the protocol default.
+3. Initialises the SDK with the mock server as endpoint, a test write key (or server key for php) and the options in `config`. Anything not in `config` keeps the protocol default, with one exception: on web and desktop the harness sets autocapture.screens to false (see the screen step). Tap auto-capture stays on everywhere.
 4. Registers the SDK's test log hook (protocol.md section 17) and collects every local refusal it reports as `{ "reason": "<code>", "name": "<event name>" }`, in order. Only refusals go in this list, not other log lines.
 5. Drives `steps` in order. Steps take no time unless the step is wait_ms. For an assert_requests step it reads GET /__recorded and fails the scenario at once if the number of requests differs from count. That is the only thing a harness ever checks itself.
 6. Finishes with POST /__verify and reports the scenario as passed exactly when the answer says so.
@@ -71,8 +71,8 @@ Fixtures are deterministic. The harness owns the clock: wait_ms advances the SDK
 | action | Fields | What the harness does |
 | --- | --- | --- |
 | launch | | Process start or page load, then init(). Session rules in protocol.md decide what the SDK emits |
-| network | state: offline or online | Makes the SDK's transport fail (offline) or reach the mock server (online). Offline attempts never reach the server |
-| screen | name | Shows a screen with that name. Through auto-capture where the platform has it, otherwise screen(name) |
+| network | state: offline or online | Makes the SDK's transport fail (offline) or reach the mock server (online). Offline attempts never reach the server. online also delivers the platform's connectivity signal to the SDK (the online event on the web and desktop, the network callback on Android, the path monitor on iOS). Per protocol.md section 4 that signal ends a backoff wait a network failure started, so a later flush can send. It never shortens a Retry-After wait |
+| screen | name | Shows a screen whose name is exactly name. On web and desktop the harness calls screen(name) with screen auto-capture off: auto-capture names a screen after its pathname (/Login, not Login) and would emit an entry screen on page load that no fixture expects. On android and ios it uses auto-capture when it can show a screen whose captured name is exactly name, otherwise screen(name). Either way that screen becomes the visible screen, so later $tap events carry it as element.screen |
 | track | name, properties or property_count, repeat | Calls track(). property_count n generates keys k0 to k(n-1) with integer values. repeat calls it n times |
 | tap | element_id, label, repeat | Taps or clicks a control whose id (resource id, accessibilityIdentifier, data-monitor-id) and visible text are given, so auto-capture sees it |
 | type_text | field, value | Types value into the named text field |

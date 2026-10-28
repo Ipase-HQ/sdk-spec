@@ -1,5 +1,5 @@
 {
-  "spec_version": "1.0.0-draft.3",
+  "spec_version": "1.0.0-draft.4",
   "id": "property-limits",
   "platforms": ["kotlin", "swift", "js", "php"],
   "description": "An event with 101 property keys, a host app event named with the reserved $ prefix and an event with a property key starting with $ are all refused locally with a logged warning and never sent. An event with exactly 100 keys goes through.",

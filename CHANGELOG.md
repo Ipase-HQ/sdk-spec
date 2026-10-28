@@ -4,6 +4,21 @@ Every change to the contract (schema, protocol, fixtures) gets a line here, and 
 
 ## [Unreleased]
 
+## [1.0.0-draft.4] - 2026-10-28
+
+Three rules the fixtures relied on but the spec never stated, found while building sdk-js against draft.3.
+
+### Added
+
+- protocol.md section 4: an online signal from the platform (NetworkCallback.onAvailable, NWPathMonitor satisfied, the window online event) ends a backoff wait that a network failure started. Retry-After waits from 429 and 503 and waits after another 5xx always run in full. The backoff counter is not reset. Section 12 counts either end of a wait as a trigger. ../docs/adr/0008-online-signal-ends-network-backoff.md.
+- protocol.md section 2.6: CORS. OPTIONS /v1/batch answers 204 with Allow-Origin `*`, Allow-Methods POST, Allow-Headers Authorization, Content-Type, Content-Encoding and X-SDK, Max-Age 7200. Every POST response carries Allow-Origin `*` and exposes Retry-After. The origin allowlist stays on the POST. ../docs/adr/0009-cors-on-the-batch-endpoint.md.
+- Mock server: OPTIONS on any path answers that preflight and is never recorded; every response carries the two CORS headers. Browser-like harnesses can keep same-origin checks on. Tests in mock-server/test/server.test.ts.
+
+### Changed
+
+- fixtures/README.md: the network online step also delivers the platform's connectivity signal. On web and desktop the harness turns screen auto-capture off and the screen step calls screen(name), because auto-capture names a screen after its pathname and emits an entry screen on page load. On android and ios it uses auto-capture only when the captured name is exactly the step's name. protocol.md section 14 says the same and that screen() makes its screen the visible one.
+- offline-then-online.json: the description says the online signal ends the wait. Steps and expectations are unchanged.
+
 ## [1.0.0-draft.3] - 2026-10-28
 
 ### Added

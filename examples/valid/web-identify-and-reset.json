@@ -34,7 +34,7 @@
         "sdk": {
           "name": "js",
           "version": "1.0.0",
-          "spec": "1.0.0-draft.3"
+          "spec": "1.0.0-draft.4"
         }
       }
     },
@@ -71,7 +71,7 @@
         "sdk": {
           "name": "js",
           "version": "1.0.0",
-          "spec": "1.0.0-draft.3"
+          "spec": "1.0.0-draft.4"
         }
       }
     },
@@ -111,7 +111,7 @@
         "sdk": {
           "name": "js",
           "version": "1.0.0",
-          "spec": "1.0.0-draft.3"
+          "spec": "1.0.0-draft.4"
         }
       }
     },
@@ -151,7 +151,7 @@
         "sdk": {
           "name": "js",
           "version": "1.0.0",
-          "spec": "1.0.0-draft.3"
+          "spec": "1.0.0-draft.4"
         }
       }
     },
@@ -192,7 +192,7 @@
         "sdk": {
           "name": "js",
           "version": "1.0.0",
-          "spec": "1.0.0-draft.3"
+          "spec": "1.0.0-draft.4"
         }
       }
     },
@@ -235,7 +235,7 @@
         "sdk": {
           "name": "js",
           "version": "1.0.0",
-          "spec": "1.0.0-draft.3"
+          "spec": "1.0.0-draft.4"
         }
       }
     },
@@ -279,7 +279,7 @@
         "sdk": {
           "name": "js",
           "version": "1.0.0",
-          "spec": "1.0.0-draft.3"
+          "spec": "1.0.0-draft.4"
         }
       }
     },
@@ -323,7 +323,7 @@
         "sdk": {
           "name": "js",
           "version": "1.0.0",
-          "spec": "1.0.0-draft.3"
+          "spec": "1.0.0-draft.4"
         }
       }
     },
@@ -364,7 +364,7 @@
         "sdk": {
           "name": "js",
           "version": "1.0.0",
-          "spec": "1.0.0-draft.3"
+          "spec": "1.0.0-draft.4"
         }
       }
     },
@@ -404,7 +404,7 @@
         "sdk": {
           "name": "js",
           "version": "1.0.0",
-          "spec": "1.0.0-draft.3"
+          "spec": "1.0.0-draft.4"
         }
       }
     },
@@ -441,7 +441,7 @@
         "sdk": {
           "name": "js",
           "version": "1.0.0",
-          "spec": "1.0.0-draft.3"
+          "spec": "1.0.0-draft.4"
         }
       }
     },
@@ -481,7 +481,7 @@
         "sdk": {
           "name": "js",
           "version": "1.0.0",
-          "spec": "1.0.0-draft.3"
+          "spec": "1.0.0-draft.4"
         }
       }
     },
@@ -521,7 +521,7 @@
         "sdk": {
           "name": "js",
           "version": "1.0.0",
-          "spec": "1.0.0-draft.3"
+          "spec": "1.0.0-draft.4"
         }
       }
     }

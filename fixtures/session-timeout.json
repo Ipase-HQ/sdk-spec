@@ -1,5 +1,5 @@
 {
-  "spec_version": "1.0.0-draft.3",
+  "spec_version": "1.0.0-draft.4",
   "id": "session-timeout",
   "platforms": ["kotlin", "swift", "js"],
   "description": "Background for one second less than the timeout keeps the session and emits $app_foregrounded. Background for one second more ends it: session_end backdated to the last activity (the second $app_backgrounded), then a session_start with launch_type resume. Each background triggers a flush, so three requests.",

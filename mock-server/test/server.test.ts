@@ -91,6 +91,45 @@ describe("health and routing", () => {
   });
 });
 
+describe("CORS", () => {
+  const preflight = (path: string) =>
+    fetch(base + path, {
+      method: "OPTIONS",
+      headers: {
+        origin: "https://app.example.com",
+        "access-control-request-method": "POST",
+        "access-control-request-headers": "authorization, content-type, content-encoding, x-sdk",
+      },
+    });
+
+  it("OPTIONS /v1/batch answers the preflight with 204 and is not recorded", async () => {
+    const res = await preflight("/v1/batch");
+    assert.equal(res.status, 204);
+    assert.equal(res.headers.get("access-control-allow-origin"), "*");
+    assert.equal(res.headers.get("access-control-allow-methods"), "POST");
+    assert.equal(res.headers.get("access-control-allow-headers"), "Authorization, Content-Type, Content-Encoding, X-SDK");
+    assert.equal(res.headers.get("access-control-max-age"), "7200");
+    assert.equal(await res.text(), "");
+    assert.deepEqual((await recorded()).requests, []);
+  });
+
+  it("OPTIONS answers on the control endpoints too", async () => {
+    for (const path of ["/__scenario", "/__verify", "/__recorded"]) {
+      const res = await preflight(path);
+      assert.equal(res.status, 204, path);
+      assert.equal(res.headers.get("access-control-allow-origin"), "*", path);
+    }
+  });
+
+  it("every batch response carries Allow-Origin and exposes Retry-After, errors included", async () => {
+    await setScenario([{ status: 429, retry_after: 30 }]);
+    for (const r of [await postBatch(minimal()), await postBatch(minimal()), await postBatch(minimal(), { auth: false })]) {
+      assert.equal(r.headers.get("access-control-allow-origin"), "*", String(r.status));
+      assert.equal(r.headers.get("access-control-expose-headers"), "Retry-After", String(r.status));
+    }
+  });
+});
+
 describe("POST /v1/batch accepts the spec examples", () => {
   for (const file of validExamples) {
     it(`${file} is accepted with nothing rejected`, async () => {
