@@ -1,6 +1,6 @@
 # Conformance fixtures
 
-One JSON file per scenario, validated by scenario.schema.json (npm run validate from the repository root). Each file lists the app actions a test harness drives and the exact events the mock server must observe. An SDK is published only when every scenario that lists its platform passes in CI against the mock server. The scenarios are the seven from docs/development-plan.md section 8; the rules they exercise are in ../protocol.md.
+One JSON file per scenario, validated by scenario.schema.json (npm run validate from the repository root). Each file lists the app actions a test harness drives and the exact events the mock server must observe. The mock server evaluates the expectations itself, so no SDK reimplements the matching rules. An SDK is published only when every scenario that lists its platform passes in CI against the mock server. The scenarios are the seven from docs/development-plan.md section 8; the rules they exercise are in ../protocol.md.
 
 | File | Platforms | Proves |
 | --- | --- | --- |
@@ -10,17 +10,57 @@ One JSON file per scenario, validated by scenario.schema.json (npm run validate 
 | session-timeout.json | kotlin, swift, js | One second under the timeout keeps the session, one second over ends it with launch_type resume |
 | identity-stitching.json | kotlin, swift, js | user_id appears after identify and disappears after reset; device_id never changes |
 | privacy.json | kotlin, swift, js | Typed text never leaves the device; $tap carries the element; denylisted screens emit nothing |
-| property-limits.json | all | 101 keys and a host-app $ name are refused locally with a warning; 100 keys go through |
+| property-limits.json | all | 101 keys, a host-app $ name and a $ property key are refused locally with a warning; 100 keys go through |
 
-## Running a scenario
+## The harness contract
 
-Each SDK repository has a harness that, for every fixture listing its platform:
+Each SDK repository has a harness. It drives the steps and reports what the SDK did locally; the mock server decides whether the scenario passed. For every fixture that lists its platform, the harness:
 
 1. Starts from a fresh install: no persisted device id, session, queue or consent state.
-2. Starts the mock server (or uses the Docker image) and posts the whole fixture object to POST /__scenario. That loads `server.respond` and clears the recording.
+2. Starts the mock server image at the VERSION the SDK was built against, and posts the whole fixture object to POST /__scenario. That loads `server.respond` and clears the recording.
 3. Initialises the SDK with the mock server as endpoint, a test write key (or server key for php) and the options in `config`. Anything not in `config` keeps the protocol default.
-4. Drives `steps` in order. Steps take no time unless the step is wait_ms.
-5. Reads GET /__recorded and evaluates `expect`.
+4. Registers the SDK's test log hook (protocol.md section 17) and collects every local refusal it reports as `{ "reason": "<code>", "name": "<event name>" }`, in order. Only refusals go in this list, not other log lines.
+5. Drives `steps` in order. Steps take no time unless the step is wait_ms. For an assert_requests step it reads GET /__recorded and fails the scenario at once if the number of requests differs from count. That is the only thing a harness ever checks itself.
+6. Finishes with POST /__verify and reports the scenario as passed exactly when the answer says so.
+
+The harness never evaluates `expect`. It does not need to parse matchers, `$` keys or checks, and it should print the failures verbatim when a scenario fails.
+
+### POST /__verify
+
+Request:
+
+```json
+{ "fixture": "property-limits", "local": { "warnings": [ { "reason": "properties_too_many", "name": "too_many" } ] } }
+```
+
+- fixture is the fixture id. The server reads fixtures/<id>.json from its own image, never from the request, so a harness cannot weaken what it is checked against. It must be the scenario loaded through POST /__scenario.
+- local.warnings is the ordered list from step 4. Leave it empty or omit local when the SDK refused nothing.
+- platform is optional. The server reads it from context.sdk.name of the recorded events; send it only when the scenario can record nothing.
+
+Response, always 200 once the request is well formed:
+
+```json
+{
+  "pass": false,
+  "fixture": "property-limits",
+  "platform": "js",
+  "failures": [
+    {
+      "path": "expect.local_rejections[2]",
+      "expected": { "name": "upgrade", "reason": "reserved_property_key" },
+      "actual": null,
+      "message": "the SDK reported 2 local warning(s); expected one for \"upgrade\" with reason reserved_property_key"
+    }
+  ]
+}
+```
+
+- path points into the fixture: scenario, platform, platforms, expect.requests.min or max, expect.events[i] and its fields (expect.events[i].screen.name, expect.events[i].properties.$count, expect.events[i].$session, expect.events[i].$same_timestamp_as), expect.checks.<check> (expect.checks.session_end_consistent.duration_ms), expect.payload_never_contains[i] and expect.local_rejections[i].
+- expected and actual are the two values compared.
+- message says what went wrong and where in the recording, as a stream position plus the request index and batch index, so the failure can be debugged without reading the server.
+- Event matching stops at the first event that does not match. The failure for that event is followed by one more at expect.events[i] that holds the whole event and names the next few events in the stream. Every other expectation is still evaluated.
+
+A body that is not JSON answers 400 malformed_body. A missing or malformed fixture id, or warnings that are not { reason, name } strings, answer 400 invalid_verify_request. A fixture the image does not carry answers 404 unknown_fixture.
 
 ### Time
 
@@ -46,6 +86,8 @@ Fixtures are deterministic. The harness owns the clock: wait_ms advances the SDK
 
 ### expect
 
+What POST /__verify evaluates. The rules are here so a fixture author knows what a matcher means; a harness does not implement them.
+
 - `events`: the exact ordered list of events in every request the server answered 202, concatenated in arrival order. Requests with any other status contribute nothing here. A matcher must match the next event in the stream or the scenario fails; events left over at the end fail it too. Listed fields must deep-equal the event's fields; objects are compared key by key, so unlisted keys are free. `{"$absent": true}` means the field must be missing. In properties and traits, `$count` fixes the number of keys. Keys starting with $ steer the matcher: `$repeat` consumes that many consecutive events; `$platforms` applies the matcher on those platforms only and skips it elsewhere; `$session` labels a session (same label, same session_id; different labels, different session_ids); `$label` names the event (the last one under `$repeat`) and `$same_timestamp_as` asserts equal timestamps with the named event.
 - `requests`: min and max for the number of requests recorded, any status.
 - `checks`, over the same 202 stream:
@@ -55,8 +97,8 @@ Fixtures are deterministic. The harness owns the clock: wait_ms advances the SDK
   - session_end_consistent: for every session_end, duration_ms equals its timestamp minus the session_start timestamp, events_count equals its seq plus one, and screens_viewed equals the number of screen events in that session.
   - rejected_requests_resent: the event_ids of every request not answered 202 all appear in a later request.
 - `payload_never_contains`: strings that must not occur anywhere in any recorded body, decoded. Checked on every request whatever its status.
-- `local_rejections`: events the SDK must refuse before queueing, in order, each with a warning the harness can observe (a log hook or listener the SDK exposes for tests).
+- `local_rejections`: events the SDK must refuse before queueing, in order, each with a warning the harness observes through the test log hook. The reported warnings must equal this list exactly, in order; a fixture without it expects none.
 
 ### Writing a new scenario
 
-Copy the closest file, keep `spec_version` equal to VERSION and `id` equal to the file name, and run npm run validate. The schema refuses unknown step actions, unknown matcher fields, event types, launch types and reserved names the wire schema does not know, and label references that point nowhere. Add a line to CHANGELOG.md.
+Copy the closest file, keep `spec_version` equal to VERSION and `id` equal to the file name, and run npm run validate. Add a passing and a failing recording for it to mock-server/test/verify.test.ts. The schema refuses unknown step actions, unknown matcher fields, event types, launch types and reserved names the wire schema does not know, and label references that point nowhere. Add a line to CHANGELOG.md.

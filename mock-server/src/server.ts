@@ -1,12 +1,13 @@
 // The mock ingest server. No product logic: it applies the checks protocol.md states,
 // records what it saw, and otherwise answers whatever the loaded scenario script says.
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { createServer, type IncomingMessage, type Server, type ServerResponse } from "node:http";
 import { setTimeout as sleep } from "node:timers/promises";
 import { gunzipSync } from "node:zlib";
 import { Recorder, type RecordedResponse } from "./recorder.js";
 import { parseScript, Scenario, type Rejection, type ScriptedResponse } from "./scenario.js";
-import { DEFAULT_SCHEMA_PATH, DEFAULT_VERSION_PATH, describeErrors, loadValidators, reasonFor, type Validators } from "./schema.js";
+import { DEFAULT_FIXTURES_DIR, DEFAULT_SCHEMA_PATH, DEFAULT_VERSION_PATH, describeErrors, loadValidators, reasonFor, type Validators } from "./schema.js";
+import { verify, type Fixture, type Warning } from "./verify.js";
 
 export const MAX_EVENTS_PER_BATCH = 500;
 export const MAX_BODY_BYTES = 1024 * 1024; // 1 MB on the wire, compressed or not
@@ -15,6 +16,7 @@ export const MAX_EVENT_BYTES = 32 * 1024; // 32 KB per serialized event
 export interface MockServerOptions {
   schemaPath?: string;
   versionPath?: string;
+  fixturesDir?: string;
   log?: (line: string) => void;
 }
 
@@ -25,6 +27,7 @@ interface Context {
   specVersion: string;
   scenario: Scenario;
   recorder: Recorder;
+  fixturesDir: string;
   log: (line: string) => void;
 }
 
@@ -34,6 +37,7 @@ export function createMockServer(options: MockServerOptions = {}): MockServer {
     specVersion: readFileSync(options.versionPath ?? DEFAULT_VERSION_PATH, "utf8").trim(),
     scenario: new Scenario(),
     recorder: new Recorder(),
+    fixturesDir: options.fixturesDir ?? DEFAULT_FIXTURES_DIR,
     log: options.log ?? (() => {}),
   };
   const server = createServer((req, res) => {
@@ -53,6 +57,7 @@ async function route(req: IncomingMessage, res: ServerResponse, ctx: Context): P
 
   if (method === "POST" && pathname === "/v1/batch") return handleBatch(req, res, ctx);
   if (method === "POST" && pathname === "/__scenario") return handleScenario(req, res, ctx);
+  if (method === "POST" && pathname === "/__verify") return handleVerify(req, res, ctx);
   if (method === "GET" && pathname === "/__recorded") {
     return sendJson(res, 200, { scenario: ctx.scenario.id, remaining_scripted: ctx.scenario.remaining, requests: ctx.recorder.all() });
   }
@@ -206,6 +211,41 @@ async function handleScenario(req: IncomingMessage, res: ServerResponse, ctx: Co
   ctx.recorder.reset();
   ctx.log(`scenario ${id ?? "(unnamed)"} loaded, ${ctx.scenario.remaining} scripted response(s), recording cleared`);
   sendJson(res, 200, { ok: true, id, queued: ctx.scenario.remaining });
+}
+
+const FIXTURE_ID = /^[a-z0-9]+(-[a-z0-9]+)*$/;
+
+// POST /__verify: { "fixture": "<id>", "local": { "warnings": [ { "reason", "name" } ] }, "platform"?: "<sdk>" }.
+// Evaluates fixtures/<id>.json's expect block against the current recording. The fixture is read from
+// disk, never from the harness, so a harness cannot weaken what it is checked against.
+async function handleVerify(req: IncomingMessage, res: ServerResponse, ctx: Context): Promise<void> {
+  const raw = await readBody(req);
+  let body: unknown;
+  try {
+    body = JSON.parse(raw.toString("utf8"));
+  } catch {
+    return sendJson(res, 400, { error: "malformed_body", message: "the body must be JSON" });
+  }
+  const bad = (message: string) => sendJson(res, 400, { error: "invalid_verify_request", message });
+  if (typeof body !== "object" || body === null || Array.isArray(body)) return bad("the body must be an object");
+  const { fixture: id, local, platform } = body as { fixture?: unknown; local?: unknown; platform?: unknown };
+  if (typeof id !== "string" || !FIXTURE_ID.test(id)) return bad("fixture must be a fixture id such as backoff-429");
+  if (platform !== undefined && typeof platform !== "string") return bad("platform must be a string");
+  const warningsIn = local === undefined ? [] : (local as { warnings?: unknown })?.warnings ?? [];
+  if (
+    !Array.isArray(warningsIn) ||
+    !warningsIn.every((w) => typeof w === "object" && w !== null && typeof w.reason === "string" && typeof w.name === "string")
+  ) {
+    return bad("local.warnings must be an array of { reason, name } strings");
+  }
+  const path = `${ctx.fixturesDir.replace(/\/$/, "")}/${id}.json`;
+  if (!existsSync(path)) return sendJson(res, 404, { error: "unknown_fixture", message: `no fixtures/${id}.json in this mock server image` });
+
+  const fixture = JSON.parse(readFileSync(path, "utf8")) as Fixture;
+  const warnings = (warningsIn as Warning[]).map(({ reason, name }) => ({ reason, name }));
+  const result = verify({ fixture, loadedScenario: ctx.scenario.id, requests: ctx.recorder.all(), warnings, platform });
+  ctx.log(`verify ${id} (${result.platform ?? "unknown platform"}) -> ${result.pass ? "pass" : `${result.failures.length} failure(s)`}`);
+  sendJson(res, 200, result);
 }
 
 function readBody(req: IncomingMessage): Promise<Buffer> {

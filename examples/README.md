@@ -59,6 +59,7 @@ Each file is minimal.json with exactly one thing wrong, so the first validation 
 | array-property.json | property values are scalars, not arrays |
 | too-many-properties.json | at most 100 property keys (this one has 101) |
 | property-key-too-long.json | property keys are at most 64 characters |
+| reserved-property-key.json | property and trait keys never start with $ |
 | property-value-too-long.json | string values are at most 1024 characters |
 | missing-platform.json | context.platform is required |
 | unknown-platform.json | context.platform is android, ios, web, desktop or server |

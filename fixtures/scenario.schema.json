@@ -274,7 +274,7 @@
             "additionalProperties": false,
             "properties": {
               "name": { "type": "string", "minLength": 1 },
-              "reason": { "enum": ["properties_too_many", "property_key_too_long", "property_value_too_long", "invalid_property", "reserved_name", "invalid_name", "invalid_user_id", "event_too_large"] }
+              "reason": { "enum": ["properties_too_many", "property_key_too_long", "property_value_too_long", "invalid_property", "reserved_name", "reserved_property_key", "invalid_name", "invalid_user_id", "event_too_large"] }
             }
           },
           "description": "Events the SDK must refuse before queueing, in order, each with a logged warning."

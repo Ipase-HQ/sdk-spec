@@ -8,6 +8,7 @@ This repo is the contract between the SDKs (sdk-js, sdk-php, sdk-kotlin, sdk-swi
 - protocol.md must be enough for an SDK author to implement a client without reading the server code.
 - Fixtures are deterministic: no wall-clock dependence, no randomness. Each scenario states the app actions to drive and the exact requests the mock server must observe.
 - The mock server never contains product logic; it validates, records and replays what the scenario file tells it to.
+- The fixture matching rules live only in mock-server/src/verify.ts, behind POST /__verify. SDK harnesses never reimplement them. Every fixture has a passing and a failing recording in mock-server/test/verify.test.ts.
 - Examples under examples/ must validate against the schema in CI (npm run validate). They are generated: edit scripts/generate-examples.mjs and run npm run examples, never the JSON files.
 
 ## Commands

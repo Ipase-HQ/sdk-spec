@@ -1,5 +1,5 @@
 {
-  "spec_version": "1.0.0-draft.2",
+  "spec_version": "1.0.0-draft.3",
   "id": "identity-stitching",
   "platforms": ["kotlin", "swift", "js"],
   "description": "Events before identify carry only device_id, events after carry user_id too. reset() ends the session (its session_end still carries the user id), clears user_id, keeps device_id, and starts a new session with launch_type warm.",

@@ -10,7 +10,7 @@ Plain node:http plus ajv, no framework. Tests use node:test.
 - npm test: type-check and run the suite
 - npm run dev: start on http://localhost:8787 (PORT, HOST and SCHEMA_PATH override)
 - npm run build, then npm start: run the compiled server from dist/
-- From the sdk-spec root: docker build -f mock-server/Dockerfile -t sdk-spec-mock-server . (the image carries schema/ and VERSION)
+- From the sdk-spec root: docker build -f mock-server/Dockerfile -t sdk-spec-mock-server . (the image carries schema/, fixtures/ and VERSION; FIXTURES_DIR overrides where POST /__verify reads fixtures)
 
 ## POST /v1/batch
 
@@ -22,7 +22,7 @@ What happens, in order. Steps 1 to 5 are real checks and never consume the scrip
 4. More than 500 events: 413.
 5. The envelope (sent_at, batch) is validated against ../schema/batch.schema.json: 400 schema_invalid with details.
 6. If the script has a response queued it is used and consumed.
-7. Otherwise 202. Each event is validated on its own and failures land in rejected while the rest are accepted: schema_invalid, reserved_name, properties_too_many and property_value_too_long come from the schema, event_too_large from the 32 KB cap. Scripted rejections are merged in and win on the same index. duplicate_event_id and timestamp_out_of_range are only ever scripted.
+7. Otherwise 202. Each event is validated on its own and failures land in rejected while the rest are accepted: schema_invalid, reserved_name, reserved_property_key, properties_too_many and property_value_too_long come from the schema, event_too_large from the 32 KB cap. Scripted rejections are merged in and win on the same index. duplicate_event_id and timestamp_out_of_range are only ever scripted.
 
 Every request is recorded whatever the outcome.
 
@@ -41,6 +41,10 @@ Loads a script and clears the recording. The body is either a whole fixture obje
 
 When the script runs out the server answers 202 with real validation. The reply is { "ok": true, "id": ..., "queued": n }, or 400 invalid_script naming the bad entry.
 
+## POST /__verify
+
+{ "fixture": "<id>", "local": { "warnings": [ { "reason", "name" } ] } } evaluates fixtures/<id>.json's expect block against the current recording and the warnings the harness collected, and answers { "pass", "fixture", "platform", "failures": [ { "path", "expected", "actual", "message" } ] }. The fixture comes from the image, not the request. Platform comes from context.sdk.name of the recorded events unless the body passes platform. ../fixtures/README.md is the full contract; src/verify.ts is the only implementation of the matching rules.
+
 ## GET /__recorded
 
 { "scenario": id, "remaining_scripted": n, "requests": [ ... ] } in arrival order. Each request carries index, received_at, method, path, headers (lowercased), compressed, body_bytes, body, events (the decoded batch), errors (why anything was rejected) and response ({ status, headers, body }, or { status: 0, dropped: true }).
@@ -52,6 +56,8 @@ DELETE /__recorded clears the recording and keeps the script. GET /__health answ
 - src/schema.ts: compiles the spec schema into an envelope validator and an event validator, maps errors to reason codes
 - src/scenario.ts: the script queue and its validation
 - src/recorder.ts: the recording
+- src/verify.ts: evaluates a fixture's expect block (events with $repeat, $platforms, $session, $label, $same_timestamp_as, $absent and $count, request bounds, every check, forbidden strings, local rejections)
 - src/server.ts: createMockServer(), the routes and the batch handler
 - src/cli.ts: the entrypoint
 - test/server.test.ts: every scripted response, every real rejection, the recording endpoints, and every file in ../examples/valid accepted
+- test/verify.test.ts: a passing and a failing recording for every fixture, built by a small deterministic SDK model and posted through POST /v1/batch, plus every matcher and check rule

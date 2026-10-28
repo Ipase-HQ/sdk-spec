@@ -1,5 +1,5 @@
 {
-  "spec_version": "1.0.0-draft.2",
+  "spec_version": "1.0.0-draft.3",
   "id": "backoff-429",
   "platforms": ["kotlin", "swift", "js", "php"],
   "description": "A 429 with Retry-After 30 produces no request for 30 seconds, even on an explicit flush, and keeps the queue intact: the second request carries exactly the events of the first. On php there are no session events and every event carries seq 0 and the nil session id.",

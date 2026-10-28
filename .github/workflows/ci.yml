@@ -60,6 +60,9 @@ jobs:
             sleep 1
           done
           curl -fsS http://127.0.0.1:8787/__health | grep -q '"ok":true'
+          # the image carries the fixtures POST /__verify reads
+          curl -fsS -X POST --data-binary @fixtures/privacy.json http://127.0.0.1:8787/__scenario
+          curl -fsS -X POST -d '{"fixture":"privacy"}' http://127.0.0.1:8787/__verify | grep -q '"fixture":"privacy"'
           docker stop mock
       - name: push to GHCR
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'

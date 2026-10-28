@@ -12,6 +12,7 @@ const addFormats = addFormatsModule.default;
 
 export const DEFAULT_SCHEMA_PATH = fileURLToPath(new URL("../../schema/batch.schema.json", import.meta.url));
 export const DEFAULT_VERSION_PATH = fileURLToPath(new URL("../../VERSION", import.meta.url));
+export const DEFAULT_FIXTURES_DIR = fileURLToPath(new URL("../../fixtures/", import.meta.url));
 
 // The reason codes protocol.md lists for entries in a 202 body's rejected array.
 export type RejectionReason =
@@ -20,6 +21,7 @@ export type RejectionReason =
   | "properties_too_many"
   | "property_value_too_long"
   | "reserved_name"
+  | "reserved_property_key"
   | "duplicate_event_id"
   | "timestamp_out_of_range";
 
@@ -50,11 +52,20 @@ export function loadValidators(schemaPath: string = DEFAULT_SCHEMA_PATH): Valida
   };
 }
 
-// Maps an event's validation errors to the protocol reason code. The reserved name rule and the
-// two property limits the schema expresses get their own code; everything else is schema_invalid.
+// Maps an event's validation errors to the protocol reason code. The reserved name rule, the reserved
+// $ prefix on property and trait keys, and the two property limits the schema expresses get their own
+// code; everything else is schema_invalid.
 export function reasonFor(errors: ErrorObject[] | null | undefined): RejectionReason {
   for (const e of errors ?? []) {
     if (e.instancePath === "/name" && ["pattern", "enum", "anyOf"].includes(e.keyword)) return "reserved_name";
+    if (
+      e.keyword === "pattern" &&
+      /\/(properties|traits)$/.test(e.instancePath) &&
+      typeof e.propertyName === "string" &&
+      e.propertyName.startsWith("$")
+    ) {
+      return "reserved_property_key";
+    }
     if (e.keyword === "maxProperties" && /\/(properties|traits)$/.test(e.instancePath)) return "properties_too_many";
     if (e.keyword === "maxLength" && /\/(properties|traits)\/[^/]+$/.test(e.instancePath)) return "property_value_too_long";
   }

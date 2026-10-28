@@ -1,5 +1,5 @@
 {
-  "spec_version": "1.0.0-draft.2",
+  "spec_version": "1.0.0-draft.3",
   "id": "privacy",
   "platforms": ["kotlin", "swift", "js"],
   "description": "Typed text never appears in any payload. A tap is auto-captured as $tap with the element id, label and screen. A denylisted screen produces nothing: the screen it replaces gets a screen_exit, and neither the screen, nor taps on it, nor text typed on it leave the device.",

@@ -1,5 +1,5 @@
 {
-  "spec_version": "1.0.0-draft.2",
+  "spec_version": "1.0.0-draft.3",
   "id": "process-kill",
   "platforms": ["kotlin", "swift"],
   "description": "Events persisted before a kill arrive on the next launch. The dead session's screen_exit and session_end are emitted on that launch, both backdated to its last activity, before the new session's cold session_start. No $app_installed on the second launch because it is not the first run.",

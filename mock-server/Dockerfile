@@ -1,4 +1,4 @@
-# Build from the sdk-spec root so the image carries schema/ and VERSION:
+# Build from the sdk-spec root so the image carries schema/, fixtures/ and VERSION:
 #   docker build -f mock-server/Dockerfile -t sdk-spec-mock-server .
 FROM node:22-alpine AS build
 WORKDIR /app/mock-server
@@ -12,6 +12,7 @@ FROM node:22-alpine
 ENV NODE_ENV=production PORT=8787 HOST=0.0.0.0
 WORKDIR /app
 COPY schema ./schema
+COPY fixtures ./fixtures
 COPY VERSION ./VERSION
 COPY mock-server/package.json ./mock-server/package.json
 COPY --from=build /app/mock-server/node_modules ./mock-server/node_modules

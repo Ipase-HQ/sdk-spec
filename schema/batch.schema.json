@@ -237,12 +237,12 @@
     "properties": {
       "type": "object",
       "maxProperties": 100,
-      "propertyNames": { "minLength": 1, "maxLength": 64 },
+      "propertyNames": { "minLength": 1, "maxLength": 64, "pattern": "^[^$]" },
       "additionalProperties": {
         "type": ["string", "number", "boolean", "null"],
         "maxLength": 1024
       },
-      "description": "Flat map of scalar values. At most 100 keys, 64-character keys, 1 KB per string value. The server also caps the whole event at 32 KB."
+      "description": "Flat map of scalar values. At most 100 keys, 64-character keys, 1 KB per string value. The server also caps the whole event at 32 KB. A key never starts with $: that prefix is reserved for the platform (ADR 0007)."
     },
     "context": {
       "type": "object",

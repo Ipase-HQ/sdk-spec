@@ -1,5 +1,5 @@
 {
-  "spec_version": "1.0.0-draft.2",
+  "spec_version": "1.0.0-draft.3",
   "id": "offline-then-online",
   "platforms": ["kotlin", "swift", "js"],
   "description": "Events captured without a network are delivered in order after reconnect, none lost, none duplicated. The 30-event trigger and the 15 second timer both fire while offline and fail; the explicit flush after reconnect drains the whole queue in one batch.",

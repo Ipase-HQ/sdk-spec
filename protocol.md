@@ -1,6 +1,6 @@
 # Wire protocol v1
 
-Status: 1.0.0-draft.2.
+Status: 1.0.0-draft.3.
 
 This document and schema/batch.schema.json are everything an SDK author needs to build a client. The fixtures under fixtures/ are the acceptance test, run against mock-server/. When this document and the schema disagree, the schema wins and this document has a bug. Development plan sections 4 and 8 hold the reasoning; ../docs/adr holds the decisions that go beyond the plan.
 
@@ -71,6 +71,7 @@ Rejection reason codes in a 202 body:
 | --- | --- |
 | schema_invalid | The event fails schema/batch.schema.json |
 | reserved_name | The name starts with $ and is not on the reserved list (section 7) |
+| reserved_property_key | A key in properties or traits starts with $. The prefix is reserved for the platform |
 | event_too_large | The serialized event exceeds 32 KB |
 | properties_too_many | properties or traits has more than 100 keys |
 | property_value_too_long | A string value in properties or traits exceeds 1024 characters |
@@ -104,7 +105,7 @@ Every event is one JSON object with the same shape. The schema is normative; thi
 | timestamp | yes | RFC 3339 with offset | Device clock at capture, millisecond precision |
 | screen | screen, screen_exit | object | Section 10 |
 | element | $tap; optional on other track events | object | id or label is required. Section 14 |
-| properties | optional on screen and track | flat map | At most 100 keys of 1 to 64 characters; string values at most 1024 characters; values are string, number, boolean or null |
+| properties | optional on screen and track | flat map | At most 100 keys of 1 to 64 characters, none starting with $; string values at most 1024 characters; values are string, number, boolean or null |
 | traits | optional on identify | flat map | Same limits as properties |
 | launch_type | session_start | cold, warm, resume | Section 9 |
 | duration_ms | session_end | integer | Section 6 |
@@ -303,6 +304,7 @@ The SDK refuses these before queueing and logs one warning per refusal naming th
 | --- | --- |
 | invalid_name | An event or screen name that is empty or longer than 128 characters |
 | reserved_name | A host app name starting with $ |
+| reserved_property_key | A key in properties or traits starting with $, whoever passed it. No reserved event carries one either |
 | invalid_user_id | A user id that is empty or longer than 128 characters |
 | properties_too_many | More than 100 keys in properties or traits |
 | property_key_too_long | A key that is empty or longer than 64 characters |
@@ -325,4 +327,4 @@ For the conformance harness every SDK also takes an injectable clock and schedul
 
 ## 18. Conformance
 
-An SDK is correct when every fixture under fixtures/ that lists its platform passes against the mock server. fixtures/README.md describes the harness, the steps and the matching rules; mock-server/README.md describes the server. CI in each SDK repository pulls the mock server image published by this repository and runs the fixtures at the VERSION the SDK was built against.
+An SDK is correct when every fixture under fixtures/ that lists its platform passes against the mock server. The harness drives the steps, collects the SDK's local refusals through the test log hook, and asks the mock server's POST /__verify for the verdict; it never implements the matching rules. fixtures/README.md describes the harness contract, the steps and the matching rules; mock-server/README.md describes the server. CI in each SDK repository pulls the mock server image published by this repository and runs the fixtures at the VERSION the SDK was built against.

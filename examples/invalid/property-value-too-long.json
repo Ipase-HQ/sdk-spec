@@ -25,7 +25,7 @@
         "sdk": {
           "name": "kotlin",
           "version": "1.0.0",
-          "spec": "1.0.0-draft.2"
+          "spec": "1.0.0-draft.3"
         }
       },
       "properties": {

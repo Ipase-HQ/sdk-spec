@@ -4,6 +4,21 @@ Every change to the contract (schema, protocol, fixtures) gets a line here, and 
 
 ## [Unreleased]
 
+## [1.0.0-draft.3] - 2026-10-28
+
+### Added
+
+- Mock server: POST /__verify takes { fixture, local: { warnings } } and evaluates that fixture's expect block against the current recording and the reported local warnings: request bounds, events with $repeat, $platforms, $session, $label, $same_timestamp_as, $absent and $count, every check, forbidden strings and local rejections. It answers { pass, fixture, platform, failures }, where each failure carries path, expected, actual and a message naming the stream position, request and batch index. The fixture is read from the image, and the image now carries fixtures/. A passing and a failing recording per fixture in mock-server/test/verify.test.ts.
+- fixtures/README.md: the harness contract. A harness drives the steps, collects its SDK's warnings through the test log hook, reads GET /__recorded only for assert_requests steps, and finishes with POST /__verify.
+- Rejection and local validation reason reserved_property_key (protocol.md sections 3 and 15), answered by the mock server. New invalid example examples/invalid/reserved-property-key.json.
+- fixtures/property-limits.json: a track with a $ property key is refused locally with reserved_property_key.
+- ../docs/adr/0007-reserved-property-keys.md.
+
+### Changed
+
+- Schema: keys in properties and traits must not start with $ (propertyNames pattern). The prefix is reserved for the platform, which stores fields without a column under $ keys (ADR 0006). This closes the collision ADR 0006 left open.
+- local_rejections must equal the reported warnings exactly; a fixture without it expects none.
+
 ## [1.0.0-draft.2] - 2026-10-27
 
 ### Added

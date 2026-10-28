@@ -276,6 +276,7 @@ const invalid = {
   "array-property.json": { breaks: "property values are scalars, not arrays", mutate: (b) => { b.batch[0].properties = { tags: ["a", "b"] }; } },
   "too-many-properties.json": { breaks: "at most 100 property keys (this one has 101)", mutate: (b) => { b.batch[0].properties = keys(101); } },
   "property-key-too-long.json": { breaks: "property keys are at most 64 characters", mutate: (b) => { b.batch[0].properties = { ["k".repeat(65)]: 1 }; } },
+  "reserved-property-key.json": { breaks: "property and trait keys never start with $", mutate: (b) => { b.batch[0].properties = { $plan: "pro" }; } },
   "property-value-too-long.json": { breaks: "string values are at most 1024 characters", mutate: (b) => { b.batch[0].properties = { note: "x".repeat(1025) }; } },
   "missing-platform.json": { breaks: "context.platform is required", mutate: (b) => { delete b.batch[0].context.platform; } },
   "unknown-platform.json": { breaks: "context.platform is android, ios, web, desktop or server", mutate: (b) => { b.batch[0].context.platform = "watch"; } },

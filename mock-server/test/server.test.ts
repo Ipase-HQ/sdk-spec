@@ -229,6 +229,34 @@ describe("per-event rejections inside a 202", () => {
     assert.deepEqual(r.json, { accepted: 0, rejected: [{ index: 0, reason: "reserved_name" }] });
   });
 
+  it("reserved_property_key for a property key starting with $", async () => {
+    const b = minimal();
+    b.batch[0].properties = { plan: "pro", $plan: "pro" };
+    const r = await postBatch(b);
+    assert.equal(r.status, 202);
+    assert.deepEqual(r.json, { accepted: 0, rejected: [{ index: 0, reason: "reserved_property_key" }] });
+    const { requests } = await recorded();
+    assert.ok(requests[0].errors.some((e: string) => e.startsWith("/batch/0/properties")));
+  });
+
+  it("reserved_property_key for a trait key starting with $", async () => {
+    const b = minimal();
+    b.batch[0].type = "identify";
+    b.batch[0].user_id = "u_1";
+    delete b.batch[0].name;
+    b.batch[0].traits = { $email: "a@example.com" };
+    const r = await postBatch(b);
+    assert.deepEqual(r.json.rejected, [{ index: 0, reason: "reserved_property_key" }]);
+  });
+
+  it("schema_invalid, not reserved_property_key, for a key that is merely too long", async () => {
+    const r = await postBatch(withProperties(0));
+    assert.equal(r.status, 202);
+    const b = minimal();
+    b.batch[0].properties = { ["k".repeat(65)]: 1 };
+    assert.deepEqual((await postBatch(b)).json.rejected, [{ index: 0, reason: "schema_invalid" }]);
+  });
+
   it("schema_invalid, not reserved_name, for a reserved name used wrongly", async () => {
     const b = minimal();
     b.batch[0].name = "$tap"; // reserved and allowed, but $tap requires element
